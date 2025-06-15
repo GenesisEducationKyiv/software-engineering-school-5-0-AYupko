@@ -10,7 +10,7 @@ export const weatherAPIResponseSchema = z.object({
 
 export type WeatherAPIResponse = z.infer<typeof weatherAPIResponseSchema>;
 
-export type WeatherSuccess = {
+type WeatherSuccess = {
   success: true;
   data: {
     temperature: number;
@@ -19,6 +19,10 @@ export type WeatherSuccess = {
   };
 };
 
-export type WeatherFailure = {
+type WeatherFailure = {
   success: false;
 };
+
+export type WeatherProvider = (params: {
+  city: string;
+}) => Promise<WeatherSuccess | WeatherFailure>;

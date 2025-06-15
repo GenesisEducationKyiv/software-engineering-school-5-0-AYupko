@@ -1,5 +1,7 @@
-import { sendConfirmationEmail } from "@/business/lib/emails";
-import { SendConfirmationEmail } from "@/business/lib/emails/types";
+import {
+  SendConfirmationEmail,
+  sendConfirmationEmail,
+} from "@/business/lib/emails";
 import { ConflictError, NotFoundError } from "@/business/lib/error";
 import {
   SubscriptionRepository,
