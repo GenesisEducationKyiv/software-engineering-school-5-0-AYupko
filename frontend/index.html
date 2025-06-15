@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Subscription</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="form-container">
+    <h2>Subscribe to Weather Updates</h2>
+    <form id="subscriptionForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" required />
+
+      <label for="city">City:</label>
+      <input type="text" id="city" required />
+
+      <label for="frequency">Frequency:</label>
+      <select id="frequency" required>
+        <option value="">Select</option>
+        <option value="Hourly">Hourly</option>
+        <option value="Daily">Daily</option>
+      </select>
+
+      <button type="submit">Subscribe</button>
+    </form>
+    <div class="success" id="successMsg" style="display:none;">Subscribed successfully!</div>
+    <div class="error" id="errorMsg" style="display:none;">Subscription failed.</div>
+  </div>
+
+   <script src="script.js"></script>
+</body>
+</html>
