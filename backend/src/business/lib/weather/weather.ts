@@ -42,7 +42,7 @@ export const getWeatherByCity = async ({
         description: data.condition.text,
       },
     };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 };
