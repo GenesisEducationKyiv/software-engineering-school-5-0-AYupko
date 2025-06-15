@@ -1,26 +1,28 @@
 import { Prisma, prisma } from "@/database/prisma";
 
-const findFirst = <T extends Prisma.SubscriptionFindFirstArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionFindFirstArgs>
-) => {
-  return prisma.subscription.findFirst(payload);
+type SubscriptionRepository = {
+  findFirst: <T extends Prisma.SubscriptionFindFirstArgs>(
+    payload: Prisma.SelectSubset<T, Prisma.SubscriptionFindFirstArgs>
+  ) => Promise<Prisma.SubscriptionGetPayload<T> | null>;
+
+  create: <T extends Prisma.SubscriptionCreateArgs>(
+    payload: Prisma.SelectSubset<T, Prisma.SubscriptionCreateArgs>
+  ) => Promise<Prisma.SubscriptionGetPayload<T>>;
+
+  update: <T extends Prisma.SubscriptionUpdateArgs>(
+    payload: Prisma.SelectSubset<T, Prisma.SubscriptionUpdateArgs>
+  ) => Promise<Prisma.SubscriptionGetPayload<T>>;
+
+  deleteOne: <T extends Prisma.SubscriptionDeleteArgs>(
+    payload: Prisma.SelectSubset<T, Prisma.SubscriptionDeleteArgs>
+  ) => Promise<Prisma.SubscriptionGetPayload<T>>;
 };
 
-const create = <T extends Prisma.SubscriptionCreateArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionCreateArgs>
-) => prisma.subscription.create(payload);
-
-const update = <T extends Prisma.SubscriptionUpdateArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionUpdateArgs>
-) => prisma.subscription.update(payload);
-
-const deleteOne = <T extends Prisma.SubscriptionDeleteArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionDeleteArgs>
-) => prisma.subscription.delete(payload);
-
-export const subscriptionRepository = {
-  findFirst,
-  create,
-  update,
-  deleteOne,
+const subscriptionRepository: SubscriptionRepository = {
+  findFirst: async (payload) => prisma.subscription.findFirst(payload),
+  create: async (payload) => prisma.subscription.create(payload),
+  update: async (payload) => prisma.subscription.update(payload),
+  deleteOne: async (payload) => prisma.subscription.delete(payload),
 };
+
+export { subscriptionRepository, SubscriptionRepository };

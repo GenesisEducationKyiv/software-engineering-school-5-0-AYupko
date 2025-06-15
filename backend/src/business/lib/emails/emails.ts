@@ -1,19 +1,17 @@
 import { InternalServerError } from "../error";
+import { SendConfirmationEmail } from "./types";
 
 const BASE_API_URL = process.env.BASE_API_URL;
 const RESEND_API_URL = "https://api.resend.com/emails";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
-export const sendConfirmationEmail = async ({
+export const sendConfirmationEmail: SendConfirmationEmail = async ({
   to,
   token,
-}: {
-  to: string;
-  token: string;
 }) => {
-   if (!RESEND_API_KEY) {
+  if (!RESEND_API_KEY) {
     return;
-   }
+  }
 
   const confirmationLink = `${BASE_API_URL}/api/confirm/${token}`;
 
