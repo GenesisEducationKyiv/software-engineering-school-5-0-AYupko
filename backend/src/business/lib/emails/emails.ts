@@ -1,9 +1,8 @@
+import { env } from "@/config";
 import { InternalServerError } from "../error";
 import { SendConfirmationEmail } from "./types";
 
-const BASE_API_URL = process.env.BASE_API_URL;
-const RESEND_API_URL = "https://api.resend.com/emails";
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RESEND_API_KEY = env.RESEND_API_KEY;
 
 export const sendConfirmationEmail: SendConfirmationEmail = async ({
   to,
@@ -13,12 +12,12 @@ export const sendConfirmationEmail: SendConfirmationEmail = async ({
     return;
   }
 
-  const confirmationLink = `${BASE_API_URL}/api/confirm/${token}`;
+  const confirmationLink = `${env.BASE_API_URL}/api/confirm/${token}`;
 
-  const res = await fetch(RESEND_API_URL, {
+  const res = await fetch(env.RESEND_API_URL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      Authorization: `Bearer ${RESEND_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

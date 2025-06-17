@@ -1,9 +1,10 @@
 import Fastify from "fastify";
 import dotenv from "dotenv";
 import cors from "@fastify/cors";
-import formbody from '@fastify/formbody';
+import formbody from "@fastify/formbody";
 
 import { configureRoutes } from "./routes";
+import { env } from "./config";
 
 dotenv.config();
 
@@ -23,13 +24,11 @@ const start = async () => {
     configureRoutes(fastify);
 
     await fastify.listen({
-      port: Number(process.env.PORT) || 3000,
+      port: env.PORT || 3000,
       host: "0.0.0.0",
     });
 
-    console.log(
-      `🚀 Server ready at http://localhost:${process.env.PORT || 3000}`
-    );
+    console.log(`🚀 Server ready at http://localhost:${env.PORT || 3000}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
