@@ -24,7 +24,7 @@ const start = async () => {
     configureRoutes(fastify);
 
     await fastify.listen({
-      port: env.PORT || 3000,
+      port: Number(env.PORT) || 3000,
       host: "0.0.0.0",
     });
 
