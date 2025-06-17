@@ -1,28 +1,47 @@
 import { Prisma, prisma } from "@/database/prisma";
+import { Subscription } from "@prisma/client";
 
 type SubscriptionRepository = {
-  findFirst: <T extends Prisma.SubscriptionFindFirstArgs>(
-    payload: Prisma.SelectSubset<T, Prisma.SubscriptionFindFirstArgs>
-  ) => Promise<Prisma.SubscriptionGetPayload<T> | null>;
-
   create: <T extends Prisma.SubscriptionCreateArgs>(
     payload: Prisma.SelectSubset<T, Prisma.SubscriptionCreateArgs>
   ) => Promise<Prisma.SubscriptionGetPayload<T>>;
 
-  update: <T extends Prisma.SubscriptionUpdateArgs>(
-    payload: Prisma.SelectSubset<T, Prisma.SubscriptionUpdateArgs>
-  ) => Promise<Prisma.SubscriptionGetPayload<T>>;
+  findByEmail: ({
+    email,
+    city,
+  }: {
+    email: string;
+    city: string;
+  }) => Promise<Subscription | null>;
 
-  deleteOne: <T extends Prisma.SubscriptionDeleteArgs>(
-    payload: Prisma.SelectSubset<T, Prisma.SubscriptionDeleteArgs>
-  ) => Promise<Prisma.SubscriptionGetPayload<T>>;
+  findByToken: ({ token }: { token: string }) => Promise<Subscription | null>;
+
+  confirmById: ({ id }: { id: string }) => Promise<void>;
+
+  deleteById: ({ id }: { id: string }) => Promise<void>;
 };
 
 const subscriptionRepository: SubscriptionRepository = {
-  findFirst: async (payload) => prisma.subscription.findFirst(payload),
+  findByEmail: async ({ email, city }) =>
+    prisma.subscription.findFirst({ where: { email, city } }),
+
+  findByToken: async ({ token }) =>
+    prisma.subscription.findFirst({ where: { token } }),
+
+  confirmById: async ({ id }) => {
+    await prisma.subscription.update({
+      where: { id },
+      data: { confirmed: true },
+    });
+  },
+
+  deleteById: async ({ id }) => {
+    await prisma.subscription.delete({
+      where: { id },
+    });
+  },
+
   create: async (payload) => prisma.subscription.create(payload),
-  update: async (payload) => prisma.subscription.update(payload),
-  deleteOne: async (payload) => prisma.subscription.delete(payload),
 };
 
 export { subscriptionRepository, SubscriptionRepository };

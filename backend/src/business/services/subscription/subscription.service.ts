@@ -18,9 +18,9 @@ const createSubscriptionService = ({
   sendConfirmationEmail: SendConfirmationEmail;
 }) => {
   const subscribe = async ({ payload }: { payload: SubscriptionInput }) => {
-    const subscription = await subscriptionRepository.findFirst({
-      where: { email: payload.email, city: payload.city },
-      select: { id: true },
+    const subscription = await subscriptionRepository.findByEmail({
+      email: payload.email,
+      city: payload.city,
     });
 
     if (subscription) {
@@ -42,34 +42,23 @@ const createSubscriptionService = ({
   };
 
   const confirmSubscription = async ({ token }: { token: string }) => {
-    const subscription = await subscriptionRepository.findFirst({
-      where: { token },
-      select: { id: true },
-    });
+    const subscription = await subscriptionRepository.findByToken({ token });
 
     if (!subscription) {
       throw new NotFoundError("Token not found");
     }
 
-    await subscriptionRepository.update({
-      where: { id: subscription.id },
-      data: { confirmed: true },
-    });
+    await subscriptionRepository.confirmById({ id: subscription.id });
   };
 
   const unsubscribe = async ({ token }: { token: string }) => {
-    const subscription = await subscriptionRepository.findFirst({
-      where: { token },
-      select: { id: true },
-    });
+    const subscription = await subscriptionRepository.findByToken({ token });
 
     if (!subscription) {
       throw new NotFoundError("Token not found");
     }
 
-    await subscriptionRepository.deleteOne({
-      where: { id: subscription.id },
-    });
+    await subscriptionRepository.deleteById({ id: subscription.id });
   };
 
   return {
