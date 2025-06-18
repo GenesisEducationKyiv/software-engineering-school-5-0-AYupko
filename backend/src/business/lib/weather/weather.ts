@@ -33,7 +33,7 @@ export const getWeatherByCity: WeatherProvider = async ({ city }) => {
         description: data.condition.text,
       },
     };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 };

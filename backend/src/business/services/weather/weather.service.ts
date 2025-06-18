@@ -1,7 +1,7 @@
 import { InternalServerError } from "@/business/lib/error";
 import { getWeatherByCity, WeatherProvider } from "@/business/lib/weather";
 
-const createWeatherService = ({
+export const createWeatherService = ({
   weatherProvider,
 }: {
   weatherProvider: WeatherProvider;

@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:apply": "prisma migrate dev --schema src/database/prisma/schema.prisma",
     "prisma:migrate:create": "prisma migrate dev --schema src/database/prisma/schema.prisma --create-only",
-    "prisma:deploy": "prisma migrate deploy --schema src/database/prisma/schema.prisma"
+    "prisma:deploy": "prisma migrate deploy --schema src/database/prisma/schema.prisma",
+    "test:unit": "jest --config jest.config.ts"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma"
@@ -20,12 +21,16 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.15.18",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^8.57.1",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "jest": "^30.0.0",
     "nodemon": "^3.1.10",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
