@@ -11,7 +11,9 @@
     "prisma:migrate:apply": "prisma migrate dev --schema src/database/prisma/schema.prisma",
     "prisma:migrate:create": "prisma migrate dev --schema src/database/prisma/schema.prisma --create-only",
     "prisma:deploy": "prisma migrate deploy --schema src/database/prisma/schema.prisma",
-    "test:unit": "jest --config jest.config.ts"
+    "test:unit": "jest --config jest.config.ts",
+    "test:integration": "jest --config jest.config.integration.ts --runInBand",
+    "test:integration:docker": "docker-compose -f docker-compose.integration.yml up --build --abort-on-container-exit"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma"

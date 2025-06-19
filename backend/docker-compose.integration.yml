@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: weather-test-db
+    restart: always
+    environment:
+      POSTGRES_DB: weather_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgtestdata:/var/lib/postgresql/data
+
+  test-runner:
+    build:
+      context: ./backend
+    container_name: weather-api-test
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env.test
+    command: sh -c "npx prisma migrate deploy && npm run test:integration"
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/tests:/app/tests
