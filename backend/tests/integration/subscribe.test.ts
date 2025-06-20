@@ -1,7 +1,10 @@
+jest.mock("@/business/lib/emails/emails");
+
 import { prisma } from "@/database/prisma";
 import supertest from "supertest";
 import { faker } from "@faker-js/faker";
 import { createApp } from "@/app";
+
 
 let app: Awaited<ReturnType<typeof createApp>>;
 let baseUrl: string;
@@ -9,7 +12,7 @@ let baseUrl: string;
 beforeEach(async () => {
   app = await createApp();
   await app.start();
-  baseUrl = app.address;
+  baseUrl = app.address + "/api";
 });
 
 afterEach(async () => {
