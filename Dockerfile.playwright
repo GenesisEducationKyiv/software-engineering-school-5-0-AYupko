@@ -3,7 +3,10 @@ FROM mcr.microsoft.com/playwright:v1.53.0-jammy
 WORKDIR /home/node/app
 
 COPY package*.json ./
+
 RUN npm install
+
+RUN chmod +x node_modules/.bin/playwright
 
 COPY . .
 
