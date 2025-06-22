@@ -38,7 +38,11 @@ const createSubscriptionService = ({
       },
     });
 
-    await sendConfirmationEmail({ to: payload.email, token });
+    try {
+      await sendConfirmationEmail({ to: payload.email, token });
+    } catch (e) {
+      console.warn("Email not sent:", e);
+    }
   };
 
   const confirmSubscription = async ({ token }: { token: string }) => {
