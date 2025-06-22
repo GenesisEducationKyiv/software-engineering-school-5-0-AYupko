@@ -7,6 +7,4 @@ RUN npm install
 
 COPY . .
 
-RUN npx playwright install --with-deps
-
 CMD ["npm", "run", "test:e2e"]
