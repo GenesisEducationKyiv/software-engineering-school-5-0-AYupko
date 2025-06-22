@@ -39,5 +39,15 @@ services:
       - "8080:80"
     restart: always
 
+  e2e-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright
+    depends_on:
+      - backend
+      - frontend
+    env_file:
+      - .env.test
+
 volumes:
   pgdata_test:
