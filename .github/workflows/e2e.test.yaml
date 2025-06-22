@@ -11,8 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run E2E tests via Docker Compose
-        run: docker compose -f docker-compose.test.yaml up --build --abort-on-container-exit e2e-runner
+      - name: Prebuild all images
+        run: docker compose -f docker-compose.test.yaml build
+
+      - name: Run E2E tests
+        run: docker compose -f docker-compose.test.yaml up --abort-on-container-exit e2e-runner
 
       - name: Clean up
         if: always()
