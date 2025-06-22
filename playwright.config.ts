@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 10000,
   retries: 0,
   use: {
-    baseURL: "http://localhost:8080",
+    baseURL: "http://frontend:80",
     headless: true,
   },
 });

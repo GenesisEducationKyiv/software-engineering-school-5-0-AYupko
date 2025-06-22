@@ -4,7 +4,7 @@ test.describe("Weather Subscription Form", () => {
   test("Subscribes successfully with valid data", async ({ page }) => {
     const email = `test${Date.now()}@gmail.com`;
 
-    await page.goto("http://localhost:8080");
+    await page.goto("/");
 
     await page.fill("#email", email);
     await page.fill("#city", "Kyiv");
@@ -17,7 +17,7 @@ test.describe("Weather Subscription Form", () => {
   test("Shows error when email is already subscribed", async ({ page }) => {
     const reusedEmail = `test${Date.now()}@gmail.com`;
 
-    await page.goto("http://localhost:8080");
+    await page.goto("/");
 
     await page.fill("#email", reusedEmail);
     await page.fill("#city", "Lviv");
