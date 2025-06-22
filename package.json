@@ -1,13 +1,12 @@
 {
   "devDependencies": {
     "@playwright/test": "^1.53.1",
-    "playwright": "^1.53.1",
-    "wait-on": "^8.0.3"
+    "playwright": "^1.53.1"
   },
   "scripts": {
+    "docker:test:up": "docker compose -f docker-compose.test.yaml up -d --build",
+    "docker:test:down": "docker compose -f docker-compose.test.yaml down",
     "test:e2e": "npx playwright test",
-    "test:e2e:docker": "npm run docker:up && npx wait-on http://localhost:3000/api/health && npm run test:e2e && npm run docker:down",
-    "docker:up": "docker-compose up -d --build",
-    "docker:down": "docker-compose down"
+    "test:e2e:docker": "npm run docker:test:up && npm run test:e2e && npm run docker:test:down"
   }
 }
