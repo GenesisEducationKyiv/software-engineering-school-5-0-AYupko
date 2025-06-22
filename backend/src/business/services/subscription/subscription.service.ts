@@ -3,6 +3,7 @@ import {
   sendConfirmationEmail,
 } from "@/business/lib/emails";
 import { ConflictError, NotFoundError } from "@/business/lib/error";
+import { env } from "@/config";
 import {
   SubscriptionRepository,
   subscriptionRepository,
@@ -38,10 +39,8 @@ const createSubscriptionService = ({
       },
     });
 
-    try {
+    if (env.NODE_ENV !== "test") {
       await sendConfirmationEmail({ to: payload.email, token });
-    } catch (e) {
-      console.warn("Email not sent:", e);
     }
   };
 

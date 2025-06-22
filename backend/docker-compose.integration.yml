@@ -19,7 +19,7 @@ services:
     depends_on:
       - db
     env_file:
-      - .env.test
+      - ../.env.test
     command: sh -c "npx prisma migrate deploy && npm run test:integration"
     volumes:
       - ./src:/app/src
