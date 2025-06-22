@@ -1,8 +1,7 @@
 {
   "devDependencies": {
     "@playwright/test": "^1.53.1",
-    "playwright": "^1.53.1",
-    "wait-on": "^8.0.3"
+    "playwright": "^1.53.1"
   },
   "scripts": {
     "docker:test:up": "docker compose -f docker-compose.test.yaml up -d --build",
