@@ -1,8 +1,10 @@
+jest.mock("@/business/lib/emails/emails");
 
-import { prisma } from "@/database/prisma";
 import supertest from "supertest";
-import { createApp } from "@/app";
 import { faker } from "@faker-js/faker";
+import { prisma } from "@/database/prisma";
+import { createApp } from "@/app";
+import { randomUUID } from "crypto";
 
 let app: Awaited<ReturnType<typeof createApp>>;
 let baseUrl: string;
@@ -18,11 +20,11 @@ afterEach(async () => {
   await prisma.subscription.deleteMany();
 });
 
-describe("GET /confirm/:token", () => {
-  it("confirms subscription with valid token", async () => {
+describe("GET /unsubscribe/:token", () => {
+  it("unsubscribes successfully with valid token", async () => {
     const email = faker.internet.email();
     const city = "Lviv";
-    const token = faker.string.uuid();
+    const token = randomUUID();
 
     await prisma.subscription.create({
       data: {
@@ -30,21 +32,21 @@ describe("GET /confirm/:token", () => {
         city,
         frequency: "Daily",
         token,
-        confirmed: false,
+        confirmed: true,
       },
     });
 
-    await supertest(baseUrl).get(`/confirm/${token}`).expect(200);
+    await supertest(baseUrl).get(`/unsubscribe/${token}`).expect(200);
 
-    const updated = await prisma.subscription.findFirst({ where: { token } });
-    expect(updated?.confirmed).toBe(true);
+    const deleted = await prisma.subscription.findFirst({ where: { token } });
+    expect(deleted).toBeNull();
   });
 
-  it("returns 404 when token is not found", async () => {
-    const token = faker.string.uuid();
+  it("returns 404 for non-existent token", async () => {
+    const randomToken = randomUUID();
 
     const response = await supertest(baseUrl)
-      .get(`/confirm/${token}`)
+      .get(`/unsubscribe/${randomToken}`)
       .expect(404);
 
     expect(response.body.message).toBe("Token not found");
