@@ -1,10 +1,11 @@
 import { InternalServerError } from "@/business/lib/error";
-import { getWeatherByCity, WeatherProvider } from "@/business/lib/weather";
+import { WeatherProviderFn } from "@/business/lib/weather";
+import { chainedWeatherProviders } from "@/business/lib/weather/chain";
 
 export const createWeatherService = ({
   weatherProvider,
 }: {
-  weatherProvider: WeatherProvider;
+  weatherProvider: WeatherProviderFn;
 }) => ({
   async getWeather({ city }: { city: string }) {
     const response = await weatherProvider({ city });
@@ -18,5 +19,5 @@ export const createWeatherService = ({
 });
 
 export const weatherService = createWeatherService({
-  weatherProvider: getWeatherByCity,
+  weatherProvider: chainedWeatherProviders,
 });

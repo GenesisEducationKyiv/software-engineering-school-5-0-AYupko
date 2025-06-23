@@ -1,7 +1,7 @@
-import { getWeatherByCity } from "@/business/lib/weather";
 import { BadRequestError, NotFoundError } from "@/business/lib/error";
+import { chainedWeatherProviders } from "@/business/lib/weather/chain";
 
-describe("getWeatherByCity", () => {
+describe("chainedWeatherProviders", () => {
   const mockFetch = jest.fn();
   global.fetch = mockFetch;
 
@@ -17,13 +17,13 @@ describe("getWeatherByCity", () => {
     jest.resetAllMocks();
   });
 
-  it("returns parsed weather data on successful response", async () => {
+  it("returns weather data from the first successful provider", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => validResponse,
     });
 
-    const result = await getWeatherByCity({ city: "Lviv" });
+    const result = await chainedWeatherProviders({ city: "Lviv" });
 
     expect(result).toEqual({
       success: true,
@@ -33,40 +33,104 @@ describe("getWeatherByCity", () => {
         description: "Sunny",
       },
     });
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it("throws BadRequestError on 400 response", async () => {
+  it("does not call second provider if first provider returns success", async () => {
+  mockFetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({
+      current: {
+        temp_c: 10,
+        humidity: 55,
+        condition: { text: "Clear" },
+      },
+    }),
+  });
+
+  const result = await chainedWeatherProviders({ city: "Kyiv" });
+
+  expect(result).toEqual({
+    success: true,
+    data: {
+      temperature: 10,
+      humidity: 55,
+      description: "Clear",
+    },
+  });
+
+  expect(mockFetch).toHaveBeenCalledTimes(1);
+});
+
+  it("falls back to second provider if first one fails", async () => {
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ current: {} }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          main: { temp: 15, humidity: 60 },
+          weather: [{ description: "Cloudy" }],
+        }),
+      });
+
+    const result = await chainedWeatherProviders({ city: "Kyiv" });
+
+    expect(result).toEqual({
+      success: true,
+      data: {
+        temperature: 15,
+        humidity: 60,
+        description: "Cloudy",
+      },
+    });
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("throws BadRequestError from the first provider", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 400,
     });
 
-    await expect(getWeatherByCity({ city: "!!!" })).rejects.toThrow(
+    await expect(chainedWeatherProviders({ city: "!!!" })).rejects.toThrow(
       BadRequestError
     );
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it("throws NotFoundError on 404 response", async () => {
+  it("throws NotFoundError from the first provider", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
     });
 
-    await expect(getWeatherByCity({ city: "UnknownCity" })).rejects.toThrow(
-      NotFoundError
-    );
+    await expect(
+      chainedWeatherProviders({ city: "UnknownCity" })
+    ).rejects.toThrow(NotFoundError);
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it("returns success: false when schema parsing fails", async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        current: {},
-      }),
-    });
+  it("returns { success: false } if all providers fail", async () => {
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ current: {} }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ main: {} }),
+      });
 
-    const result = await getWeatherByCity({ city: "InvalidData" });
+    const result = await chainedWeatherProviders({ city: "NoDataCity" });
 
-    expect(result.success).toBe(false);
+    expect(result).toEqual({ success: false });
+    expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 });
