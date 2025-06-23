@@ -1,6 +1,8 @@
 import { InternalServerError } from "@/business/lib/error";
-import { WeatherProviderFn } from "@/business/lib/weather";
-import { chainedWeatherProviders } from "@/business/lib/weather/chain";
+import {
+  chainedWeatherProviders,
+  WeatherProviderFn,
+} from "@/business/lib/weather";
 
 export const createWeatherService = ({
   weatherProvider,

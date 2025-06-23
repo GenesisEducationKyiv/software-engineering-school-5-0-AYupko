@@ -1,3 +1,7 @@
+jest.mock("@/business/lib/logger", () => ({
+  logToFile: jest.fn(),
+}));
+
 import { BadRequestError, NotFoundError } from "@/business/lib/error";
 import { chainedWeatherProviders } from "@/business/lib/weather/chain";
 
@@ -38,30 +42,30 @@ describe("chainedWeatherProviders", () => {
   });
 
   it("does not call second provider if first provider returns success", async () => {
-  mockFetch.mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({
-      current: {
-        temp_c: 10,
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        current: {
+          temp_c: 10,
+          humidity: 55,
+          condition: { text: "Clear" },
+        },
+      }),
+    });
+
+    const result = await chainedWeatherProviders({ city: "Kyiv" });
+
+    expect(result).toEqual({
+      success: true,
+      data: {
+        temperature: 10,
         humidity: 55,
-        condition: { text: "Clear" },
+        description: "Clear",
       },
-    }),
+    });
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
-
-  const result = await chainedWeatherProviders({ city: "Kyiv" });
-
-  expect(result).toEqual({
-    success: true,
-    data: {
-      temperature: 10,
-      humidity: 55,
-      description: "Clear",
-    },
-  });
-
-  expect(mockFetch).toHaveBeenCalledTimes(1);
-});
 
   it("falls back to second provider if first one fails", async () => {
     mockFetch

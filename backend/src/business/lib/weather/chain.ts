@@ -1,3 +1,4 @@
+import { logToFile } from "../logger";
 import { openWeatherProvider, weatherAPIProvider } from "./providers";
 import { WeatherProviderFn } from "./types";
 
@@ -10,10 +11,10 @@ export const chainProviders = (
   providers: ProviderWithName[]
 ): WeatherProviderFn => {
   return async ({ city }) => {
-    for (const { fn } of providers) {
+    for (const { name, fn } of providers) {
       const result = await fn({ city });
 
-      // await logToFile(name, result);
+      logToFile(`${name} - Response: ${JSON.stringify(result)}`);
 
       if (result.success) return result;
     }
