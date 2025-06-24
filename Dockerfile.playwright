@@ -8,6 +8,4 @@ RUN npm install
 
 COPY . .
 
-RUN chmod +x node_modules/.bin/playwright
-
 CMD ["npm", "run", "test:e2e"]

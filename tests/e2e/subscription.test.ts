@@ -2,6 +2,9 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Weather Subscription Form", () => {
   test("Subscribes successfully with valid data", async ({ page }) => {
+    page.on("console", (msg) => {
+      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
+    });
     const email = `test${Date.now()}@gmail.com`;
 
     await page.goto("/");
@@ -15,6 +18,9 @@ test.describe("Weather Subscription Form", () => {
   });
 
   test("Shows error when email is already subscribed", async ({ page }) => {
+    page.on("console", (msg) => {
+      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
+    });
     const reusedEmail = `test${Date.now()}@gmail.com`;
 
     await page.goto("/");
