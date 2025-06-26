@@ -12,8 +12,6 @@ const getWeather = async (
 
   const response: GetWeatherResponse = data.weather;
 
-  console.log("response:", response);
-
   return reply.code(200).send(response);
 };
 

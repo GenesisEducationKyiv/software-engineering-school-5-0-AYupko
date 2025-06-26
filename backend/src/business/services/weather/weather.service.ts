@@ -1,16 +1,22 @@
 import { InternalServerError } from "@/business/lib/error";
-import { getWeatherByCity } from "@/business/lib/weather/weather";
+import { getWeatherByCity, WeatherProvider } from "@/business/lib/weather";
 
-const getWeather = async ({ city }: { city: string }) => {
-  const response = await getWeatherByCity({ city });
+const createWeatherService = ({
+  weatherProvider,
+}: {
+  weatherProvider: WeatherProvider;
+}) => ({
+  async getWeather({ city }: { city: string }) {
+    const response = await weatherProvider({ city });
 
-  if (!response.success) {
-    throw new InternalServerError("Failed to fetch weather data");
-  }
+    if (!response.success) {
+      throw new InternalServerError("Failed to fetch weather data");
+    }
 
-  return { weather: response.data };
-};
+    return { weather: response.data };
+  },
+});
 
-export const weatherService = {
-  getWeather,
-};
+export const weatherService = createWeatherService({
+  weatherProvider: getWeatherByCity,
+});

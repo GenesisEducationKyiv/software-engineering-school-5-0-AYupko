@@ -1,19 +1,10 @@
-import {
-  weatherAPIResponseSchema,
-  WeatherFailure,
-  WeatherSuccess,
-} from "./types";
+import { weatherAPIResponseSchema, WeatherProvider } from "./types";
 import { BadRequestError, NotFoundError } from "../error";
+import { env } from "@/config";
 
-const BASE_URL = "http://api.weatherapi.com/v1";
-
-export const getWeatherByCity = async ({
-  city,
-}: {
-  city: string;
-}): Promise<WeatherSuccess | WeatherFailure> => {
-  const url = `${BASE_URL}/current.json?key=${
-    process.env.WEATHER_API_KEY
+export const getWeatherByCity: WeatherProvider = async ({ city }) => {
+  const url = `${env.WEATHER_API_URL}/current.json?key=${
+    env.WEATHER_API_KEY
   }&q=${encodeURIComponent(city)}`;
 
   const response = await fetch(url);

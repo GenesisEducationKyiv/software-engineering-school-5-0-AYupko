@@ -1,26 +1,47 @@
 import { Prisma, prisma } from "@/database/prisma";
+import { Subscription } from "@prisma/client";
 
-const findFirst = <T extends Prisma.SubscriptionFindFirstArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionFindFirstArgs>
-) => {
-  return prisma.subscription.findFirst(payload);
+type SubscriptionRepository = {
+  create: <T extends Prisma.SubscriptionCreateArgs>(
+    payload: Prisma.SelectSubset<T, Prisma.SubscriptionCreateArgs>
+  ) => Promise<Prisma.SubscriptionGetPayload<T>>;
+
+  findByEmail: ({
+    email,
+    city,
+  }: {
+    email: string;
+    city: string;
+  }) => Promise<Subscription | null>;
+
+  findByToken: ({ token }: { token: string }) => Promise<Subscription | null>;
+
+  confirmById: ({ id }: { id: string }) => Promise<void>;
+
+  deleteById: ({ id }: { id: string }) => Promise<void>;
 };
 
-const create = <T extends Prisma.SubscriptionCreateArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionCreateArgs>
-) => prisma.subscription.create(payload);
+const subscriptionRepository: SubscriptionRepository = {
+  findByEmail: async ({ email, city }) =>
+    prisma.subscription.findFirst({ where: { email, city } }),
 
-const update = <T extends Prisma.SubscriptionUpdateArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionUpdateArgs>
-) => prisma.subscription.update(payload);
+  findByToken: async ({ token }) =>
+    prisma.subscription.findFirst({ where: { token } }),
 
-const deleteOne = <T extends Prisma.SubscriptionDeleteArgs>(
-  payload: Prisma.SelectSubset<T, Prisma.SubscriptionDeleteArgs>
-) => prisma.subscription.delete(payload);
+  confirmById: async ({ id }) => {
+    await prisma.subscription.update({
+      where: { id },
+      data: { confirmed: true },
+    });
+  },
 
-export const subscriptionRepository = {
-  findFirst,
-  create,
-  update,
-  deleteOne,
+  deleteById: async ({ id }) => {
+    await prisma.subscription.delete({
+      where: { id },
+    });
+  },
+
+  create: async (payload) => prisma.subscription.create(payload),
 };
+
+export { subscriptionRepository, SubscriptionRepository };
