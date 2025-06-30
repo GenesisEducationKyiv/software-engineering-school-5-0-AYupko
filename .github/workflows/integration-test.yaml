@@ -32,6 +32,9 @@ jobs:
 
       redis:
         image: redis:7-alpine
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
         ports:
           - 6379:6379
         options: >-
