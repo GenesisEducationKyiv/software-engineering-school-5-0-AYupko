@@ -10,6 +10,8 @@ jobs:
 
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/weather_test
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
 
     defaults:
       run:
@@ -58,6 +60,14 @@ jobs:
 
       - name: Run migrations
         run: npx prisma migrate deploy
+
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432; do echo "Waiting for Postgres…"; sleep 1; done
+
+      - name: Wait for Redis
+        run: |
+          until redis-cli -h localhost -p 6379 ping; do echo "Waiting for Redis…"; sleep 1; done
 
       - name: Run integration tests
         run: npm run test:integration
