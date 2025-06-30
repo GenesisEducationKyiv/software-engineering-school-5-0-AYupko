@@ -24,8 +24,7 @@ jobs:
 
       - name: Wait for backend and frontend to be ready
         run: |
-          wait-port localhost:3000
-          wait-port localhost:8080
+          wait-port backend:3000
 
       - name: Run E2E tests
         run: docker compose -f docker-compose.test.yaml up --abort-on-container-exit e2e-runner
