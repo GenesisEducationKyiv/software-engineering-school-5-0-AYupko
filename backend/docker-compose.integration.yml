@@ -25,6 +25,7 @@ services:
     container_name: weather-api-test
     depends_on:
       - db
+      - redis
     env_file:
       - ../.env.test
     command: sh -c "npx prisma migrate deploy && npm run test:integration"
