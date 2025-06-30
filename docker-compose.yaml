@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
@@ -27,6 +25,7 @@ services:
       - db
     volumes:
        - ./backend/src:/app/src
+       - ./backend/logs:/app/logs
 
     command: sh -c "npx prisma migrate deploy && npm run start:dev"
 
