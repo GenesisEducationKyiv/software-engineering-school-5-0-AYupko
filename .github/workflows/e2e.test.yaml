@@ -11,8 +11,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install wait-port
+        run: npm install -g wait-port
+
       - name: Prebuild all images
         run: docker compose -f docker-compose.test.yaml build
+
+      - name: Wait for backend and frontend to be ready
+        run: |
+          wait-port localhost:3000
+          wait-port localhost:8080
 
       - name: Run E2E tests
         run: docker compose -f docker-compose.test.yaml up --abort-on-container-exit e2e-runner
