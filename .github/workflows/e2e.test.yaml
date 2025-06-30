@@ -22,9 +22,16 @@ jobs:
       - name: Prebuild all images
         run: docker compose -f docker-compose.test.yaml build
 
-      - name: Wait for backend and frontend to be ready
+      - name: Wait for backend health
         run: |
-          wait-port backend:3000
+          for i in {1..30}; do
+            if curl -sSf http://localhost:3000/health > /dev/null; then
+              echo "✅ Backend is ready"
+              break
+            fi
+            echo "⏳ Waiting for backend... ($i/30)"
+            sleep 2
+          done
 
       - name: Run E2E tests
         run: docker compose -f docker-compose.test.yaml up --abort-on-container-exit e2e-runner
