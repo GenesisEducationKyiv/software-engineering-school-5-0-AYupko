@@ -61,13 +61,10 @@ jobs:
       - name: Run migrations
         run: npx prisma migrate deploy
 
-      - name: Wait for Postgres
-        run: |
-          until pg_isready -h localhost -p 5432; do echo "Waiting for Postgres…"; sleep 1; done
-
       - name: Wait for Redis
         run: |
-          until redis-cli -h localhost -p 6379 ping; do echo "Waiting for Redis…"; sleep 1; done
+          npm install -g wait-port
+          wait-port localhost:6379
 
       - name: Run integration tests
         run: npm run test:integration
