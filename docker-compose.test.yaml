@@ -29,6 +29,13 @@ services:
       - ./backend/src:/app/src
     command: sh -c "npx prisma migrate deploy && npm run start:dev"
 
+  redis:
+    image: redis:alpine
+    container_name: weather-redis-e2e-test
+    ports:
+      - "6379:6379"
+    restart: always
+
   frontend:
     image: nginx:alpine
     container_name: weather-frontend-e2e-test
