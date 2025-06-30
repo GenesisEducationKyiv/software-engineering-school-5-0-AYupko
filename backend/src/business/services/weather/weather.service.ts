@@ -4,11 +4,14 @@ import {
   WeatherProviderFn,
 } from "@/business/lib/weather";
 import { redis } from "@/plugins/redis";
+import Redis from "ioredis";
 
 export const createWeatherService = ({
   weatherProvider,
+  redis,
 }: {
   weatherProvider: WeatherProviderFn;
+  redis: Redis;
 }) => ({
   async getWeather({ city }: { city: string }) {
     const cacheKey = `weather:${city.toLowerCase()}`;
@@ -32,4 +35,5 @@ export const createWeatherService = ({
 
 export const weatherService = createWeatherService({
   weatherProvider: chainedWeatherProviders,
+  redis: redis,
 });

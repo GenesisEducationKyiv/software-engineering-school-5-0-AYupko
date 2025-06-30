@@ -1,12 +1,18 @@
 import { createWeatherService } from "@/business/services";
-import { redis } from "@/plugins/redis";
+import Redis from "ioredis";
 
 describe("Redis Integration Tests", () => {
-  beforeAll(async () => {
-    await redis.flushall();
+  let redis: Redis;
+
+  beforeAll(() => {
+    redis = new Redis({
+      host: process.env.REDIS_HOST || "localhost",
+      port: Number(process.env.REDIS_PORT) || 6379,
+    });
   });
 
   afterAll(async () => {
+    await redis.flushall();
     await redis.quit();
   });
 
@@ -48,6 +54,7 @@ describe("Redis Integration Tests", () => {
 
     const testService = createWeatherService({
       weatherProvider: mockWeatherProvider,
+      redis: redis,
     });
 
     const firstResponse = await testService.getWeather({ city });
