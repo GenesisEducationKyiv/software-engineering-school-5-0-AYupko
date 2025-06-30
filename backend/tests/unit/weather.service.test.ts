@@ -1,7 +1,8 @@
+jest.mock("@/plugins/redis");
+
 import { InternalServerError } from "@/business/lib/error";
 import { createWeatherService } from "@/business/services";
-import Redis from "ioredis";
-import { createMockRedis } from "tests/mocks/redis";
+import { redis } from "@/plugins/redis";
 
 describe("weatherService", () => {
   const validWeather = {
@@ -10,10 +11,8 @@ describe("weatherService", () => {
     description: "Cloudy",
   };
 
-  let mockRedis: jest.Mocked<Redis>;
-
   beforeEach(() => {
-    mockRedis = createMockRedis();
+    jest.clearAllMocks();
   });
 
   it("returns weather when provider is successful", async () => {
@@ -24,7 +23,7 @@ describe("weatherService", () => {
 
     const service = createWeatherService({
       weatherProvider: mockProvider,
-      redis: mockRedis,
+      redis: redis,
     });
     const result = await service.getWeather({ city: "Lviv" });
 
@@ -36,7 +35,7 @@ describe("weatherService", () => {
 
     const service = createWeatherService({
       weatherProvider: mockProvider,
-      redis: mockRedis,
+      redis: redis,
     });
 
     await expect(service.getWeather({ city: "FailCity" })).rejects.toThrow(
