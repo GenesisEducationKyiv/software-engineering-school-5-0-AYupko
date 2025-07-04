@@ -12,7 +12,7 @@
     "prisma:migrate:create": "prisma migrate dev --schema src/database/prisma/schema.prisma --create-only",
     "prisma:deploy": "prisma migrate deploy --schema src/database/prisma/schema.prisma",
     "test:unit": "jest --config jest.config.ts",
-    "test:integration": "jest --config jest.config.integration.ts --runInBand --detectOpenHandles",
+    "test:integration": "jest --config jest.config.integration.ts --runInBand --forceExit",
     "test:integration:docker": "docker-compose -f docker-compose.integration.yml up --build --abort-on-container-exit"
   },
   "prisma": {
