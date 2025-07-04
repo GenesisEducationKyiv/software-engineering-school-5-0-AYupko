@@ -1,4 +1,5 @@
 import { InternalServerError } from "@/business/lib/error";
+import { incrementCacheHit } from "@/business/lib/metrics";
 import {
   chainedWeatherProviders,
   WeatherProviderFn,
@@ -18,6 +19,8 @@ export const createWeatherService = ({
     const cachedData = await redis.get(cacheKey);
 
     if (cachedData) {
+      incrementCacheHit(cacheKey);
+
       return { weather: JSON.parse(cachedData) };
     }
 
