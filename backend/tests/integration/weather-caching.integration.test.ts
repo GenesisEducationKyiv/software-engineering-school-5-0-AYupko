@@ -1,14 +1,9 @@
 import { createWeatherService } from "@/business/services";
-import Redis from "ioredis";
+import { redis } from "@/plugins/redis";
 
 describe("Redis Integration Tests", () => {
-  let redis: Redis;
-
-  beforeAll(() => {
-    redis = new Redis({
-      host: process.env.REDIS_HOST || "localhost",
-      port: Number(process.env.REDIS_PORT) || 6379,
-    });
+  beforeAll(async () => {
+    await redis.ping();
   });
 
   afterAll(async () => {
