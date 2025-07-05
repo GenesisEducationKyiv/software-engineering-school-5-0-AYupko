@@ -1,5 +1,5 @@
 import { InternalServerError } from "@/business/lib/error";
-import { incrementCacheHit } from "@/business/lib/metrics";
+import { incrementCacheHit } from "@/business/lib/observability/metrics";
 import {
   chainedWeatherProviders,
   WeatherProviderFn,
