@@ -1,0 +1,27 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Prebuild all images
+        run: docker compose -f docker-compose.test.yaml build
+
+      - name: Run E2E tests
+        run: docker compose -f docker-compose.test.yaml up --abort-on-container-exit e2e-runner
+
+      - name: Clean up
+        if: always()
+        run: docker compose -f docker-compose.test.yaml down -v
