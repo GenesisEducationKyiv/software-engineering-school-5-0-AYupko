@@ -4,7 +4,7 @@ import {
   chainedWeatherProviders,
   WeatherProviderFn,
 } from "@/business/lib/weather";
-import { redis } from "@/plugins/redis";
+import { redis } from "@/business/lib/redis";
 import Redis from "ioredis";
 
 export const createWeatherService = ({
