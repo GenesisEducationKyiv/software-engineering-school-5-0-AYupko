@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 
-export async function healthRoutes(fastify: FastifyInstance) {
+export const healthcheckRoutes = async (fastify: FastifyInstance) => {
   fastify.get("/", async () => {
     return { status: "ok" };
   });
-}
+};
