@@ -28,6 +28,11 @@ services:
     volumes:
       - ./backend/src:/app/src
     command: sh -c "npx prisma migrate deploy && npm run start:dev"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backend:3000/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   frontend:
     image: nginx:alpine
