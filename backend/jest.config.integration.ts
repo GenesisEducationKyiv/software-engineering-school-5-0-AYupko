@@ -9,6 +9,7 @@ const config: Config = {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   verbose: true,
+  testTimeout: 20000,
 };
 
 export default config;

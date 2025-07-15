@@ -28,6 +28,11 @@ services:
     volumes:
       - ./backend/src:/app/src
     command: sh -c "npx prisma migrate deploy && npm run start:dev"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backend:3000/api/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   frontend:
     image: nginx:alpine
@@ -44,8 +49,10 @@ services:
       context: .
       dockerfile: Dockerfile.playwright
     depends_on:
-      - backend
-      - frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
     env_file:
       - .env.test
 

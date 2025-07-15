@@ -10,6 +10,17 @@ const envSchema = z.object({
 
   WEATHER_API_KEY: z.string().min(1, "WEATHER_API_KEY is required"),
   WEATHER_API_URL: z.string().min(1, "WEATHER_API_URL is required"),
+
+  OPEN_WEATHER_MAP_API_URL: z
+    .string()
+    .min(1, "OPEN_WEATHER_MAP_API_URL is required"),
+
+  OPEN_WEATHER_MAP_API_KEY: z
+    .string()
+    .min(1, "OPEN_WEATHER_MAP_API_KEY is required"),
+
+  REDIS_HOST: z.string().min(1, "REDIS_HOST is required"),
+  REDIS_PORT: z.string().min(1, "REDIS_PORT is required"),
 });
 
 export const env = envSchema.parse({
@@ -22,4 +33,10 @@ export const env = envSchema.parse({
 
   WEATHER_API_KEY: process.env.WEATHER_API_KEY,
   WEATHER_API_URL: process.env.WEATHER_API_URL,
+
+  OPEN_WEATHER_MAP_API_URL: process.env.OPEN_WEATHER_MAP_API_URL,
+  OPEN_WEATHER_MAP_API_KEY: process.env.OPEN_WEATHER_MAP_API_KEY,
+
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT,
 });
