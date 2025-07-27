@@ -1,16 +1,18 @@
 FROM node:18-alpine
 
-WORKDIR /app
+WORKDIR /app/services/subscription-service
 
-COPY package*.json ./
+COPY ./services/subscription-service/package*.json ./
 RUN npm install
 
-RUN npx prisma generate
+COPY ./services/tsconfig.json /app/services/tsconfig.json
 
-COPY . .
+COPY ./services/subscription-service/ ./
+
+RUN npx prisma generate
 
 RUN npm run build
 
 EXPOSE 3002
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+CMD ["sh", "-c", "npm run prisma:deploy && npm start"]

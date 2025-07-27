@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc && tsc-alias",
     "start": "node dist/main.js",
     "dev": "tsx src/main.ts"
   },

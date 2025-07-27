@@ -14,7 +14,8 @@ services:
 
   api-gateway:
     build:
-      context: ./api-gateway
+      context: .
+      dockerfile: ./services/api-gateway/Dockerfile
     container_name: api-gateway
     restart: always
     ports:
@@ -24,11 +25,11 @@ services:
     depends_on:
       - weather-service
       - subscription-service
-      - backend
 
   weather-service:
     build:
-      context: ./services/weather-service
+      context: .
+      dockerfile: ./services/weather-service/Dockerfile
     container_name: weather-service
     restart: always
     env_file:
@@ -40,7 +41,8 @@ services:
 
   subscription-service:
     build:
-      context: ./services/subscription-service
+      context: .
+      dockerfile: ./services/subscription-service/Dockerfile
     container_name: subscription-service
     restart: always
     env_file:
