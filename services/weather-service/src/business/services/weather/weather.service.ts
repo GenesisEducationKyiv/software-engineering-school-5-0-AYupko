@@ -1,11 +1,11 @@
-import Redis from "ioredis";
 import {
   chainedWeatherProviders,
   incrementCacheHit,
   InternalServerError,
   redis,
   WeatherProviderFn,
-} from "../../lib";
+} from "@/business/lib";
+import Redis from "ioredis";
 
 export const createWeatherService = ({
   weatherProvider,

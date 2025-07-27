@@ -1,9 +1,6 @@
+import { weatherService } from "@/business/services";
+import { GetWeatherQuery, GetWeatherResponse } from "@/schemas";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { weatherService } from "weather-service/src/business/services";
-import {
-  GetWeatherQuery,
-  GetWeatherResponse,
-} from "weather-service/src/schemas";
 
 const getWeather = async (
   request: FastifyRequest<{ Querystring: GetWeatherQuery }>,

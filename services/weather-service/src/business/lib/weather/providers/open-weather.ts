@@ -1,4 +1,4 @@
-import { config } from "../../../../config";
+import { config } from "@/config";
 import { openWeatherAPIResponseSchema, WeatherProviderFn } from "../types";
 import { BadRequestError, NotFoundError } from "../../error";
 

@@ -1,4 +1,4 @@
-import { register } from "@/business/lib/observability/metrics";
+import { register } from "@/business/lib";
 import { FastifyInstance } from "fastify";
 
 export const metricsRoutes = async (fastify: FastifyInstance) => {

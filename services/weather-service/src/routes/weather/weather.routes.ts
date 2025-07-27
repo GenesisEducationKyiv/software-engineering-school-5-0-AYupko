@@ -1,10 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { zodToJsonSchema as $ref } from "zod-to-json-schema";
 import { getWeather } from "./weather.handlers";
-import {
-  getWeatherQuerySchema,
-  weatherResponseSchema,
-} from "weather-service/src/schemas";
+import { getWeatherQuerySchema, weatherResponseSchema } from "@/schemas";
 
 export const weatherRoutes = async (fastify: FastifyInstance) => {
   fastify.get(

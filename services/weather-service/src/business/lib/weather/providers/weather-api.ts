@@ -1,6 +1,7 @@
+import { config } from "@/config";
 import { weatherAPIResponseSchema, WeatherProviderFn } from "../types";
 import { BadRequestError, NotFoundError } from "../../error";
-import { config } from "../../../../config";
+
 export const weatherAPIProvider: WeatherProviderFn = async ({ city }) => {
   const url = `${config.weatherApiUrl}/current.json?key=${
     config.weatherApiKey

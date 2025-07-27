@@ -12,44 +12,22 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  api-gateway:
+  backend:
     build:
-      context: ./api-gateway
-    container_name: api-gateway
+      context: ./backend
+    container_name: weather-api
     restart: always
     ports:
       - "3000:3000"
     env_file:
-      - ./services/api-gateway/.env
-    depends_on:
-      - weather-service
-      - subscription-service
-      - backend
-
-  weather-service:
-    build:
-      context: ./services/weather-service
-    container_name: weather-service
-    restart: always
-    env_file:
-      - ./services/weather-service/.env
-    depends_on:
-      - redis
-    ports:
-      - "3001:3001"
-
-  subscription-service:
-    build:
-      context: ./services/subscription-service
-    container_name: subscription-service
-    restart: always
-    env_file:
-      - ./services/subscription-service/.env
+      - ./backend/.env
     depends_on:
       - db
-      - redis
-    ports:
-      - "3002:3002"
+    volumes:
+       - ./backend/src:/app/src
+       - ./backend/logs:/app/logs
+
+    command: sh -c "npx prisma migrate deploy && npm run start:dev"
 
   redis:
     image: redis:alpine
@@ -64,7 +42,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./backend/prometheus.yaml:/etc/prometheus/prometheus.yml
     restart: always
 
   frontend:
