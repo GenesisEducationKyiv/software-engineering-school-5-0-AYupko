@@ -37,9 +37,9 @@ const createSubscriptionService = ({
       },
     });
 
-    if (config.nodeEnv !== "test") {
-      await sendConfirmationEmail({ to: payload.email, token });
-    }
+    // if (config.nodeEnv !== "test") {
+    //   await sendConfirmationEmail({ to: payload.email, token });
+    // }
   };
 
   const confirmSubscription = async ({ token }: { token: string }) => {

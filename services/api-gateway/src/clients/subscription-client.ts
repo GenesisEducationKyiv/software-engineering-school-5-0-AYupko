@@ -7,8 +7,12 @@ export class SubscriptionClient {
     this.client = axios.create({ baseURL });
   }
 
-  async createSubscription(email: string, city: string) {
-    const response = await this.client.post("/api/subscribe", { email, city });
+  async createSubscription(email: string, city: string, frequency: string) {
+    const response = await this.client.post("/api/subscribe", {
+      email,
+      city,
+      frequency,
+    });
     return response.data;
   }
 

@@ -5,6 +5,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc && tsc-alias",
     "start": "node dist/main.js",
+    "start:dev": "nodemon -L src/index.ts",
     "dev": "tsx src/main.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate:apply": "prisma migrate dev --schema src/database/prisma/schema.prisma",

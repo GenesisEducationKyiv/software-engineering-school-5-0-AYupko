@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc && tsc-alias",
     "start": "node dist/main.js",
-    "dev": "tsx src/main.ts"
+    "dev": "tsx src/main.ts",
+    "start:dev": "nodemon -L src/index.ts"
   },
   "keywords": [],
   "author": "",

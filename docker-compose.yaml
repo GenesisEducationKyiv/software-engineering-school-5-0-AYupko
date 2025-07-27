@@ -25,6 +25,9 @@ services:
     depends_on:
       - weather-service
       - subscription-service
+    volumes:
+      - ./services/api-gateway/src:/app/services/api-gateway/src
+    command: sh -c "npm run start:dev"
 
   weather-service:
     build:
@@ -38,6 +41,9 @@ services:
       - redis
     ports:
       - "3001:3001"
+    volumes:
+      - ./services/weather-service/src:/app/services/weather-service/src
+    command: sh -c "npm run start:dev"
 
   subscription-service:
     build:
@@ -52,6 +58,9 @@ services:
       - redis
     ports:
       - "3002:3002"
+    volumes:
+      - ./services/subscription-service/src:/app/services/subscription-service/src
+    command: sh -c "npm run start:dev"
 
   redis:
     image: redis:alpine
