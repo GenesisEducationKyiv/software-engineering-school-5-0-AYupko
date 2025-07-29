@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [api-gateway, weather-service, subscription-service]
+        service: [weather-service, subscription-service]
 
     steps:
       - uses: actions/checkout@v3

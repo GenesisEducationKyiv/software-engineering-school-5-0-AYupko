@@ -1,6 +1,7 @@
 import { sendConfirmationEmail } from "@/business/lib/emails/emails";
 import { SendConfirmationEmail } from "@/business/lib/emails/types";
 import { ConflictError, NotFoundError } from "@/business/lib/error";
+import { config } from "@/config";
 import {
   SubscriptionRepository,
   subscriptionRepository,
@@ -36,9 +37,9 @@ const createSubscriptionService = ({
       },
     });
 
-    // if (config.nodeEnv !== "test") {
-    //   await sendConfirmationEmail({ to: payload.email, token });
-    // }
+    if (config.nodeEnv !== "test") {
+      await sendConfirmationEmail({ to: payload.email, token });
+    }
   };
 
   const confirmSubscription = async ({ token }: { token: string }) => {
