@@ -1,8 +1,8 @@
-jest.mock("@/plugins/redis");
+jest.mock("@/business/lib/redis");
 
 import { InternalServerError } from "@/business/lib/error";
 import { createWeatherService } from "@/business/services";
-import { redis } from "@/plugins/redis";
+import { redis } from "@/business/lib/redis";
 
 describe("weatherService", () => {
   const validWeather = {

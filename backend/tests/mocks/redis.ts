@@ -1,4 +1,4 @@
-jest.mock("@/plugins/redis", () => ({
+jest.mock("@/business/lib/redis", () => ({
   redis: {
     get: jest.fn(),
     set: jest.fn(),

@@ -1,5 +1,5 @@
 import { createWeatherService } from "@/business/services";
-import { redis } from "@/plugins/redis";
+import { redis } from "@/business/lib/redis";
 
 describe("Redis Integration Tests", () => {
   beforeAll(async () => {
