@@ -1,4 +1,4 @@
-jest.mock("@/business/lib/logger", () => ({
+jest.mock("@/business/lib/observability/logger", () => ({
   logToFile: jest.fn(),
 }));
 

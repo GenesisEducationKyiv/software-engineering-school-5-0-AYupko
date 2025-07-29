@@ -10,6 +10,8 @@ jobs:
 
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/weather_test
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
 
     defaults:
       run:
@@ -30,6 +32,19 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+      redis:
+        image: redis:7-alpine
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - uses: actions/checkout@v3
 
@@ -45,6 +60,11 @@ jobs:
 
       - name: Run migrations
         run: npx prisma migrate deploy
+
+      - name: Wait for Redis
+        run: |
+          npm install -g wait-port
+          wait-port localhost:6379
 
       - name: Run integration tests
         run: npm run test:integration

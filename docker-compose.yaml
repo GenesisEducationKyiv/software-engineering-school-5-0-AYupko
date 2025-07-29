@@ -29,6 +29,22 @@ services:
 
     command: sh -c "npx prisma migrate deploy && npm run start:dev"
 
+  redis:
+    image: redis:alpine
+    container_name: weather-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: weather-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./backend/prometheus.yaml:/etc/prometheus/prometheus.yml
+    restart: always
+
   frontend:
     image: nginx:alpine
     container_name: weather-frontend

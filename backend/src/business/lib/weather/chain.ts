@@ -1,4 +1,4 @@
-import { logToFile } from "../logger";
+import { logToFile } from "../observability/logger";
 import { openWeatherProvider, weatherAPIProvider } from "./providers";
 import { WeatherProviderFn } from "./types";
 

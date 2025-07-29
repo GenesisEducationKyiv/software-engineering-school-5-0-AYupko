@@ -1,5 +1,8 @@
+jest.mock("@/plugins/redis");
+
 import { InternalServerError } from "@/business/lib/error";
 import { createWeatherService } from "@/business/services";
+import { redis } from "@/plugins/redis";
 
 describe("weatherService", () => {
   const validWeather = {
@@ -8,13 +11,20 @@ describe("weatherService", () => {
     description: "Cloudy",
   };
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("returns weather when provider is successful", async () => {
     const mockProvider = jest.fn().mockResolvedValue({
       success: true,
       data: validWeather,
     });
 
-    const service = createWeatherService({ weatherProvider: mockProvider });
+    const service = createWeatherService({
+      weatherProvider: mockProvider,
+      redis: redis,
+    });
     const result = await service.getWeather({ city: "Lviv" });
 
     expect(result.weather).toEqual(validWeather);
@@ -23,7 +33,10 @@ describe("weatherService", () => {
   it("throws InternalServerError when provider fails", async () => {
     const mockProvider = jest.fn().mockResolvedValue({ success: false });
 
-    const service = createWeatherService({ weatherProvider: mockProvider });
+    const service = createWeatherService({
+      weatherProvider: mockProvider,
+      redis: redis,
+    });
 
     await expect(service.getWeather({ city: "FailCity" })).rejects.toThrow(
       InternalServerError
