@@ -11,6 +11,7 @@
     "prisma:migrate:apply": "prisma migrate dev --schema src/database/prisma/schema.prisma",
     "prisma:migrate:create": "prisma migrate dev --schema src/database/prisma/schema.prisma --create-only",
     "prisma:deploy": "prisma migrate deploy --schema src/database/prisma/schema.prisma",
+    "test:unit": "jest --selectProjects unit",
     "test:integration": "jest --selectProjects integration --runInBand --forceExit",
     "test:integration:docker": "docker-compose -f docker-compose.test.yaml up --build --abort-on-container-exit"
   },
