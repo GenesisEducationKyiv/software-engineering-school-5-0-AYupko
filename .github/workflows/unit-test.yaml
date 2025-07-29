@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Run Unit Tests
 
 on:
   pull_request:
@@ -7,9 +7,9 @@ on:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
+    strategy:
+      matrix:
+        service: [weather-service, subscription-service]
 
     steps:
       - uses: actions/checkout@v3
@@ -19,7 +19,9 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        working-directory: services/${{ matrix.service }}
+        run: npm ci
 
       - name: Run unit tests
+        working-directory: services/${{ matrix.service }}
         run: npm run test:unit

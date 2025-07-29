@@ -5,7 +5,7 @@ document.getElementById('subscriptionForm').addEventListener('submit', async (e)
   const frequency = document.getElementById('frequency').value;
 
   try {
-    const response = await fetch('http://backend:3000/api/subscribe', {
+    const response = await fetch('http://api-gateway:3000/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, city, frequency })
