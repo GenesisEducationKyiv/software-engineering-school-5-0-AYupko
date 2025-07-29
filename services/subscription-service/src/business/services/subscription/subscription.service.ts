@@ -1,7 +1,6 @@
 import { sendConfirmationEmail } from "@/business/lib/emails/emails";
 import { SendConfirmationEmail } from "@/business/lib/emails/types";
 import { ConflictError, NotFoundError } from "@/business/lib/error";
-import { config } from "@/config";
 import {
   SubscriptionRepository,
   subscriptionRepository,

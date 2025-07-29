@@ -2,11 +2,10 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import formbody from "@fastify/formbody";
 
-import { Config } from "./config";
 import { errorHandler } from "./plugins/error-handler";
 import { configureRoutes } from "./routes";
 
-export const createApp = async (logger = true, config: Config) => {
+export const createApp = async (logger = true, config = { port: 3002 }) => {
   const app = Fastify({ logger });
 
   await app.register(cors, { origin: true, credentials: true });
