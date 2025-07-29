@@ -1,4 +1,4 @@
-name: Lint
+name: Lint Services
 
 on:
   pull_request:
@@ -7,6 +7,9 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [api-gateway, weather-service, subscription-service]
 
     steps:
       - uses: actions/checkout@v3
@@ -16,9 +19,9 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        working-directory: backend
+        working-directory: services/${{ matrix.service }}
         run: npm ci
 
       - name: Run ESLint
-        working-directory: backend
+        working-directory: services/${{ matrix.service }}
         run: npm run lint
