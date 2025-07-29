@@ -1,13 +1,11 @@
-FROM node:18-alpine
+FROM node:18
 
-WORKDIR /app/services/api-gateway
+WORKDIR /app
 
-COPY ./services/api-gateway/package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY ./services/tsconfig.json /app/services/tsconfig.json
-
-COPY ./services/api-gateway/ ./
+COPY . .
 
 RUN npm run build
 

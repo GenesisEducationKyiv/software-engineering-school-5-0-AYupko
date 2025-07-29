@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 export function logToFile(message: string, fileName = "weather.log") {
-  const logFilePath = path.resolve(__dirname, "../../../logs", fileName);
+  const logFilePath = path.resolve(__dirname, "../../logs", fileName);
   const logDir = path.dirname(logFilePath);
 
   try {
