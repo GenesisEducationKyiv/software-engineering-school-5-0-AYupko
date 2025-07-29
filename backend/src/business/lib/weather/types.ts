@@ -10,6 +10,24 @@ export const weatherAPIResponseSchema = z.object({
 
 export type WeatherAPIResponse = z.infer<typeof weatherAPIResponseSchema>;
 
+export const openWeatherAPIResponseSchema = z.object({
+  main: z.object({
+    temp: z.number(),
+    humidity: z.number(),
+  }),
+  weather: z
+    .array(
+      z.object({
+        description: z.string(),
+      })
+    )
+    .nonempty(),
+});
+
+export type OpenWeatherAPIResponse = z.infer<
+  typeof openWeatherAPIResponseSchema
+>;
+
 type WeatherSuccess = {
   success: true;
   data: {
@@ -23,6 +41,8 @@ type WeatherFailure = {
   success: false;
 };
 
-export type WeatherProvider = (params: {
+export type WeatherResult = WeatherSuccess | WeatherFailure;
+
+export type WeatherProviderFn = (params: {
   city: string;
-}) => Promise<WeatherSuccess | WeatherFailure>;
+}) => Promise<WeatherResult>;

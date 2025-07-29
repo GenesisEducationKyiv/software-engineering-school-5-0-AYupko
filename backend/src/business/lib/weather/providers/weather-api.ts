@@ -1,8 +1,8 @@
-import { weatherAPIResponseSchema, WeatherProvider } from "./types";
-import { BadRequestError, NotFoundError } from "../error";
 import { env } from "@/config";
+import { weatherAPIResponseSchema, WeatherProviderFn } from "../types";
+import { BadRequestError, NotFoundError } from "../../error";
 
-export const getWeatherByCity: WeatherProvider = async ({ city }) => {
+export const weatherAPIProvider: WeatherProviderFn = async ({ city }) => {
   const url = `${env.WEATHER_API_URL}/current.json?key=${
     env.WEATHER_API_KEY
   }&q=${encodeURIComponent(city)}`;
