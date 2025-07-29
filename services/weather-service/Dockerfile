@@ -1,16 +1,10 @@
-FROM node:18-alpine
+FROM node:18
 
-WORKDIR /app/services/weather-service
+WORKDIR /app
 
-COPY ./services/weather-service/package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY ./services/tsconfig.json /app/services/tsconfig.json
-
-COPY ./services/weather-service/ ./
+COPY . .
 
 RUN npm run build
-
-EXPOSE 3001
-
-CMD ["npm", "start"]
