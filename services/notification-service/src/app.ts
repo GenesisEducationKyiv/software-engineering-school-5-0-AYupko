@@ -8,8 +8,6 @@ export const createApp = async (logger = true, config = { port: 3003 }) => {
 
   await app.register(cors, { origin: true, credentials: true });
 
-  // configureRoutes(app);
-
   app.setErrorHandler(errorHandler);
 
   return {

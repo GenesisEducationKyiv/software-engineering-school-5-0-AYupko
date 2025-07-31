@@ -21,3 +21,11 @@ enum Frequency {
   Hourly
   Daily
 }
+
+model OutboxEvent {
+  id           String    @id @default(uuid())
+  topic        String
+  payload      Json
+  createdAt    DateTime  @default(now())
+  processedAt  DateTime?
+}
