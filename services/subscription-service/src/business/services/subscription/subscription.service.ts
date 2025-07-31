@@ -1,20 +1,22 @@
-import { sendConfirmationEmail } from "@/business/lib/emails/emails";
-import { SendConfirmationEmail } from "@/business/lib/emails/types";
 import { ConflictError, NotFoundError } from "@/business/lib/error";
-import { config } from "@/config";
+import { prisma } from "@/database/prisma";
 import {
   SubscriptionRepository,
   subscriptionRepository,
 } from "@/database/repositories";
+import {
+  outboxRepository,
+  OutboxRepository,
+} from "@/database/repositories/outbox-event";
 import { SubscriptionInput } from "@/schemas/subscription.schema";
 import { randomUUID } from "crypto";
 
 const createSubscriptionService = ({
   subscriptionRepository,
-  sendConfirmationEmail,
+  outboxRepository,
 }: {
   subscriptionRepository: SubscriptionRepository;
-  sendConfirmationEmail: SendConfirmationEmail;
+  outboxRepository: OutboxRepository;
 }) => {
   const subscribe = async ({ payload }: { payload: SubscriptionInput }) => {
     const subscription = await subscriptionRepository.findByEmail({
@@ -28,18 +30,29 @@ const createSubscriptionService = ({
 
     const token = randomUUID();
 
-    await subscriptionRepository.create({
-      data: {
-        email: payload.email,
-        frequency: payload.frequency,
-        city: payload.city,
-        token,
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      await subscriptionRepository.create(
+        {
+          email: payload.email,
+          frequency: payload.frequency,
+          city: payload.city,
+          token,
+        },
+        tx
+      );
 
-    if (config.nodeEnv !== "test") {
-      await sendConfirmationEmail({ to: payload.email, token });
-    }
+      await outboxRepository.create(
+        {
+          topic: "subscription.events",
+          payload: {
+            type: "SUBSCRIPTION_CREATED",
+            recepientEmail: payload.email,
+            confirmationToken: token,
+          },
+        },
+        tx
+      );
+    });
   };
 
   const confirmSubscription = async ({ token }: { token: string }) => {
@@ -71,5 +84,5 @@ const createSubscriptionService = ({
 
 export const subscriptionService = createSubscriptionService({
   subscriptionRepository,
-  sendConfirmationEmail: sendConfirmationEmail,
+  outboxRepository,
 });

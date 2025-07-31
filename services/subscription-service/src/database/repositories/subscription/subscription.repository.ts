@@ -1,10 +1,21 @@
-import { Subscription } from "@prisma/client";
-import { Prisma, prisma } from "@/database/prisma";
+import { Frequency, Prisma, Subscription } from "@prisma/client";
+import { prisma } from "@/database/prisma";
 
 type SubscriptionRepository = {
-  create: <T extends Prisma.SubscriptionCreateArgs>(
-    payload: Prisma.SelectSubset<T, Prisma.SubscriptionCreateArgs>
-  ) => Promise<Prisma.SubscriptionGetPayload<T>>;
+  create: (
+    {
+      email,
+      frequency,
+      city,
+      token,
+    }: {
+      email: string;
+      frequency: Frequency;
+      city: string;
+      token: string;
+    },
+    tx?: Prisma.TransactionClient
+  ) => Promise<Subscription>;
 
   findByEmail: ({
     email,
@@ -41,7 +52,7 @@ const subscriptionRepository: SubscriptionRepository = {
     });
   },
 
-  create: async (payload) => prisma.subscription.create(payload),
+  create: async (payload) => prisma.subscription.create({ data: payload }),
 };
 
 export { subscriptionRepository, SubscriptionRepository };
