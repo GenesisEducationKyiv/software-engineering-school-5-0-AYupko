@@ -8,7 +8,7 @@ import {
   OutboxRepository,
 } from "@/database/repositories/outbox-event";
 
-const createOutboxService = ({
+export const createOutboxService = ({
   outboxRepository,
   brokerManager,
 }: {
