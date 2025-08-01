@@ -6,7 +6,7 @@ export const sendConfirmationEmail: SendConfirmationEmail = async ({
   to,
   token,
 }) => {
-  const confirmationLink = `${config.baseApiUrl}/api/confirm/${token}`;
+  const confirmationLink = `${config.gatewayUrl}/api/confirm/${token}`;
 
   const res = await fetch(config.resendApiUrl, {
     method: "POST",

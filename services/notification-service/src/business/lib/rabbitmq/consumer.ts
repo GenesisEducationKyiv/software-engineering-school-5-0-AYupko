@@ -1,7 +1,7 @@
-import { brokerManager, BrokerManager } from "./broker";
+import { BrokerManager } from "./broker";
 import { ConsumerOptions } from "./types";
 import { EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY } from "./constants";
-import { eventService, EventService } from "@/business/services";
+import { EventService } from "@/business/services";
 
 export class Consumer {
   constructor(
@@ -20,8 +20,6 @@ export class Consumer {
     await channel.bindQueue(q.queue, exchangeName, routingKey);
 
     channel.prefetch(1);
-
-    console.log(`[Consumer] Waiting for messages in queue: ${q.queue}`);
 
     channel.consume(
       q.queue,
@@ -44,11 +42,13 @@ export class Consumer {
   }
 }
 
-export const createSubscriptionConsumer = (dependencies: {
+export const createSubscriptionConsumer = ({
+  brokerManager,
+  eventService,
+}: {
   brokerManager: BrokerManager;
   eventService: EventService;
 }) => {
-  const { brokerManager, eventService } = dependencies;
   return new Consumer(
     brokerManager,
     {

@@ -23,27 +23,27 @@ services:
     env_file:
       - ./services/api-gateway/.env
     depends_on:
-      # - weather-service
+      - weather-service
       - subscription-service
     volumes:
       - ./services/api-gateway/src:/app/src
     command: sh -c "npm run start:dev"
 
-  # weather-service:
-  #   build:
-  #     context: ./services/weather-service
-  #     dockerfile: Dockerfile
-  #   container_name: weather-service
-  #   restart: always
-  #   env_file:
-  #     - ./services/weather-service/.env
-  #   depends_on:
-  #     - redis
-  #   ports:
-  #     - "3001:3001"
-  #   volumes:
-  #     - ./services/weather-service/src:/app/services/weather-service/src
-  #   command: sh -c "npm run start:dev"
+  weather-service:
+    build:
+      context: ./services/weather-service
+      dockerfile: Dockerfile
+    container_name: weather-service
+    restart: always
+    env_file:
+      - ./services/weather-service/.env
+    depends_on:
+      - redis
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./services/weather-service/src:/app/services/weather-service/src
+    command: sh -c "npm run start:dev"
 
   subscription-service:
     build:
@@ -88,12 +88,12 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  # redis:
-  #   image: redis:alpine
-  #   container_name: weather-redis
-  #   ports:
-  #     - "6379:6379"
-  #   restart: always
+  redis:
+    image: redis:alpine
+    container_name: weather-redis
+    ports:
+      - "6379:6379"
+    restart: always
 
   prometheus:
     image: prom/prometheus:latest

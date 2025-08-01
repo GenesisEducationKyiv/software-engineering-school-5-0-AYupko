@@ -15,16 +15,12 @@ export const createEventService = ({
 }): EventService => {
   return async (msg: ConsumeMessage) => {
     const event = JSON.parse(msg.content.toString());
-    console.log(`[SubscriptionConsumer] Received event:`, event);
 
     if (event.type === "SUBSCRIPTION_CREATED") {
       await sendConfirmationEmail({
         to: event.recipientEmail,
         token: event.confirmationToken,
       });
-      console.log(
-        `[SubscriptionConsumer] Confirmation email sent to ${event.recipientEmail}`
-      );
     } else {
       console.warn(`[SubscriptionConsumer] Unknown event type: ${event.type}`);
     }
