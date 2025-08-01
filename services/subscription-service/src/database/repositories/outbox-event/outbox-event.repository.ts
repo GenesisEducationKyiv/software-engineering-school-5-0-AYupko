@@ -16,7 +16,7 @@ type OutboxRepository = {
 
   findNotProcessed: () => Promise<OutboxEvent[]>;
 
-  updateProcessed: ({ ids }: { ids: string[] }) => Promise<void>;
+  updateProcessed: ({ id }: { id: string }) => Promise<void>;
 };
 
 const outboxRepository: OutboxRepository = {
@@ -35,9 +35,9 @@ const outboxRepository: OutboxRepository = {
     });
   },
 
-  updateProcessed: async ({ ids }) => {
-    await prisma.outboxEvent.updateMany({
-      where: { id: { in: ids } },
+  updateProcessed: async ({ id }) => {
+    await prisma.outboxEvent.update({
+      where: { id },
       data: { processedAt: new Date() },
     });
   },
