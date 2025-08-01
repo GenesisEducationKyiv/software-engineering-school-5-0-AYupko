@@ -1,5 +1,5 @@
+import { InternalServerError } from "@/business/lib";
 import { SendConfirmationEmail } from "./types";
-import { InternalServerError } from "../error";
 import { config } from "@/config";
 
 export const sendConfirmationEmail: SendConfirmationEmail = async ({

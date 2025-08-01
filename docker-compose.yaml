@@ -23,27 +23,27 @@ services:
     env_file:
       - ./services/api-gateway/.env
     depends_on:
-      - weather-service
+      # - weather-service
       - subscription-service
     volumes:
-      - ./services/api-gateway/src:/app/services/api-gateway/src
+      - ./services/api-gateway/src:/app/src
     command: sh -c "npm run start:dev"
 
-  weather-service:
-    build:
-      context: ./services/weather-service
-      dockerfile: Dockerfile
-    container_name: weather-service
-    restart: always
-    env_file:
-      - ./services/weather-service/.env
-    depends_on:
-      - redis
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./services/weather-service/src:/app/services/weather-service/src
-    command: sh -c "npm run start:dev"
+  # weather-service:
+  #   build:
+  #     context: ./services/weather-service
+  #     dockerfile: Dockerfile
+  #   container_name: weather-service
+  #   restart: always
+  #   env_file:
+  #     - ./services/weather-service/.env
+  #   depends_on:
+  #     - redis
+  #   ports:
+  #     - "3001:3001"
+  #   volumes:
+  #     - ./services/weather-service/src:/app/services/weather-service/src
+  #   command: sh -c "npm run start:dev"
 
   subscription-service:
     build:
@@ -55,19 +55,45 @@ services:
       - ./services/subscription-service/.env
     depends_on:
       - db
-      - redis
+      - rabbitmq
     ports:
       - "3002:3002"
     volumes:
-      - ./services/subscription-service/src:/app/services/subscription-service/src
+      - ./services/subscription-service/src:/app/src
     command: sh -c "npm run start:dev"
 
-  redis:
-    image: redis:alpine
-    container_name: weather-redis
-    ports:
-      - "6379:6379"
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
     restart: always
+    env_file:
+      - ./services/notification-service/.env
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./services/notification-service/src:/app/src
+    command: sh -c "npm run start:dev"
+  
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: weather-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # redis:
+  #   image: redis:alpine
+  #   container_name: weather-redis
+  #   ports:
+  #     - "6379:6379"
+  #   restart: always
 
   prometheus:
     image: prom/prometheus:latest
@@ -91,3 +117,4 @@ services:
 
 volumes:
   pgdata:
+  rabbitmq_data:

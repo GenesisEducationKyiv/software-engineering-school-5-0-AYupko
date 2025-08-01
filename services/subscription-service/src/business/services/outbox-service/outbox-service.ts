@@ -29,7 +29,8 @@ const createOutboxService = ({
         channel.publish(
           EXCHANGE_NAME,
           event.topic,
-          Buffer.from(JSON.stringify(event.payload))
+          Buffer.from(JSON.stringify(event.payload)),
+          { persistent: true }
         );
 
         await outboxRepository.updateProcessed({ id: event.id });

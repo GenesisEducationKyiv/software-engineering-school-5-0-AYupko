@@ -46,7 +46,7 @@ const createSubscriptionService = ({
           topic: "subscription.events",
           payload: {
             type: "SUBSCRIPTION_CREATED",
-            recepientEmail: payload.email,
+            recipientEmail: payload.email,
             confirmationToken: token,
           },
         },

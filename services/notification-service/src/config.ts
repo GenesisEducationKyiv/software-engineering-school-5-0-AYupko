@@ -6,6 +6,7 @@ const configSchema = z.object({
   resendApiKey: z.string(),
   resendApiUrl: z.string(),
   baseApiUrl: z.string(),
+  rabbitMqUrl: z.string(),
 });
 
 export const config = configSchema.parse({
@@ -14,6 +15,8 @@ export const config = configSchema.parse({
   resendApiKey: process.env.RESEND_API_KEY,
   resendApiUrl: process.env.RESEND_API_URL,
   baseApiUrl: process.env.BASE_API_URL,
+  rabbitMqUrl: process.env.RABBITMQ_URL,
+
 });
 
 export type Config = z.infer<typeof configSchema>;
