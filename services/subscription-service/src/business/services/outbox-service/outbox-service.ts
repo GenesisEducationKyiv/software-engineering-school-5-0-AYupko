@@ -7,6 +7,7 @@ import {
   outboxRepository,
   OutboxRepository,
 } from "@/database/repositories/outbox-event";
+import { FastifyBaseLogger } from "fastify";
 
 export const createOutboxService = ({
   outboxRepository,
@@ -15,7 +16,7 @@ export const createOutboxService = ({
   outboxRepository: OutboxRepository;
   brokerManager: BrokerManager;
 }) => {
-  const processOutboxEvents = async () => {
+  const processOutboxEvents = async (logger: FastifyBaseLogger) => {
     const notProcessedEvents = await outboxRepository.findNotProcessed();
 
     if (notProcessedEvents.length === 0) {
@@ -35,9 +36,9 @@ export const createOutboxService = ({
 
         await outboxRepository.updateProcessed({ id: event.id });
       } catch (error) {
-        console.error(
-          `[Outbox Service] Error processing event ${event.id}:`,
-          error
+        logger.error(
+          { err: error, eventId: event.id },
+          `[Outbox Service] Error processing event`
         );
       }
     }

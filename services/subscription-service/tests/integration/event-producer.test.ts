@@ -35,7 +35,7 @@ const waitForMessage = (
 };
 
 beforeAll(async () => {
-  app = await createApp();
+  app = await createApp(config);
   await app.start();
   baseUrl = app.address + "/api";
 
@@ -79,7 +79,7 @@ describe("Outbox Producer Integration Test", () => {
     const dbEvent = await prisma.outboxEvent.findFirst();
     expect(dbEvent).not.toBeNull();
 
-    await outboxService.processOutboxEvents();
+    await outboxService.processOutboxEvents(app.instance.log);
 
     const receivedMsg = await waitForMessage(amqpChannel, testQueue.queue);
 

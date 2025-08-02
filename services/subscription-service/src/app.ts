@@ -5,15 +5,36 @@ import formbody from "@fastify/formbody";
 import { errorHandler } from "./plugins/error-handler";
 import { configureRoutes } from "./routes";
 import { scheduleMessageRelay } from "./business/crons/message-relay.cron";
+import { Config } from "./config";
+import { brokerManager } from "./business/lib/rabbitmq";
 
-export const createApp = async (logger = true, config = { port: 3002 }) => {
-  const app = Fastify({ logger });
+export const createApp = async (config: Config) => {
+  const app = Fastify({
+    logger: {
+      level: config.logLevel,
+      base: null,
+      timestamp: () => `,"time":"${new Date().toISOString()}"`,
+      transport:
+        config.nodeEnv === "development"
+          ? {
+              target: "pino-pretty",
+              options: {
+                colorize: true,
+                translateTime: "SYS:standard",
+                ignore: "pid,hostname",
+              },
+            }
+          : undefined,
+    },
+  });
+
+  brokerManager.setLogger(app.log);
 
   await app.register(cors, { origin: true, credentials: true });
   await app.register(formbody);
 
   configureRoutes(app);
-  scheduleMessageRelay();
+  scheduleMessageRelay(app.log);
 
   app.setErrorHandler(errorHandler);
 

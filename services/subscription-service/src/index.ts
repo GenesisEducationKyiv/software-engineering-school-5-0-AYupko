@@ -1,7 +1,7 @@
 import { createApp } from "./app";
 import { config } from "./config";
 
-createApp(true, config)
+createApp(config)
   .then((app) =>
     app
       .start()

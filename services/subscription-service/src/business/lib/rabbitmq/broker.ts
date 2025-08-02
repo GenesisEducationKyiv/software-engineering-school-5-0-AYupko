@@ -2,11 +2,17 @@ import { config } from "@/config";
 import amqplib, { Channel, ChannelModel } from "amqplib";
 import { EXCHANGE_NAME, MAX_RETRIES, RETRY_DELAY_MS } from "./constants";
 import { delay } from "../utils";
+import { FastifyBaseLogger } from "fastify";
 
 class BrokerManager {
   private connection: ChannelModel | null = null;
   private channel: Channel | null = null;
   private isConnecting: boolean = false;
+  private logger: FastifyBaseLogger | Console = console;
+
+  public setLogger(logger: FastifyBaseLogger) {
+    this.logger = logger;
+  }
 
   public async getChannel(): Promise<Channel> {
     if (!this.channel) {
@@ -36,25 +42,24 @@ class BrokerManager {
 
     for (let i = 1; i <= MAX_RETRIES; i++) {
       try {
-        console.log(
+        this.logger.debug(
           `[Broker] Attempting to connect to RabbitMQ (Attempt ${i}/${MAX_RETRIES})...`
         );
         this.connection = await amqplib.connect(config.rabbitMqUrl);
         this.channel = await this.connection.createChannel();
 
         this.connection.on("error", (err) => {
-          console.error("[Broker] Connection error", err);
+          this.logger.error({ err }, "[Broker] Connection error");
           this.resetConnection();
         });
         this.connection.on("close", () => {
-          console.warn("[Broker] Connection closed.");
+          this.logger.warn("[Broker] Connection closed.");
           this.resetConnection();
         });
 
         await this.channel.assertExchange(EXCHANGE_NAME, "direct", {
           durable: true,
         });
-        console.log("[Broker] Successfully connected to RabbitMQ.");
         this.isConnecting = false;
         return;
       } catch (error) {
@@ -80,7 +85,7 @@ class BrokerManager {
       await this.connection.close();
     }
     this.resetConnection();
-    console.log("[Broker] Connection closed gracefully.");
+    this.logger.info("[Broker] Connection closed gracefully.");
   }
 }
 

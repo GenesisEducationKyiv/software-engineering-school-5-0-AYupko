@@ -3,12 +3,13 @@ import { faker } from "@faker-js/faker";
 import { prisma } from "@/database/prisma";
 import { createApp } from "@/app";
 import { randomUUID } from "crypto";
+import { config } from "@/config";
 
 let app: Awaited<ReturnType<typeof createApp>>;
 let baseUrl: string;
 
 beforeAll(async () => {
-  app = await createApp();
+  app = await createApp(config);
   await app.start();
   baseUrl = app.address + "/api";
 });
