@@ -12,22 +12,81 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  backend:
+  api-gateway:
     build:
-      context: ./backend
-    container_name: weather-api
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
     restart: always
     ports:
       - "3000:3000"
     env_file:
-      - ./backend/.env
+      - ./services/api-gateway/.env
+    depends_on:
+      - weather-service
+      - subscription-service
+    volumes:
+      - ./services/api-gateway/src:/app/src
+    command: sh -c "npm run start:dev"
+
+  weather-service:
+    build:
+      context: ./services/weather-service
+      dockerfile: Dockerfile
+    container_name: weather-service
+    restart: always
+    env_file:
+      - ./services/weather-service/.env
+    depends_on:
+      - redis
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./services/weather-service/src:/app/services/weather-service/src
+    command: sh -c "npm run start:dev"
+
+  subscription-service:
+    build:
+      context: ./services/subscription-service
+      dockerfile: Dockerfile
+    container_name: subscription-service
+    restart: always
+    env_file:
+      - ./services/subscription-service/.env
     depends_on:
       - db
+      - rabbitmq
+    ports:
+      - "3002:3002"
     volumes:
-       - ./backend/src:/app/src
-       - ./backend/logs:/app/logs
+      - ./services/subscription-service/src:/app/src
+    command: sh -c "npm run start:dev"
 
-    command: sh -c "npx prisma migrate deploy && npm run start:dev"
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    restart: always
+    env_file:
+      - ./services/notification-service/.env
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./services/notification-service/src:/app/src
+    command: sh -c "npm run start:dev"
+  
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: weather-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
   redis:
     image: redis:alpine
@@ -42,7 +101,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./backend/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yaml:/etc/prometheus/prometheus.yml
     restart: always
 
   frontend:
@@ -58,3 +117,4 @@ services:
 
 volumes:
   pgdata:
+  rabbitmq_data:

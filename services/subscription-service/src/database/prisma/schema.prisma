@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  email     String
+  city      String
+  frequency Frequency
+  token     String   @unique
+  confirmed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+enum Frequency {
+  Hourly
+  Daily
+}
+
+model OutboxEvent {
+  id           String    @id @default(uuid())
+  topic        String
+  payload      Json
+  createdAt    DateTime  @default(now())
+  processedAt  DateTime?
+}

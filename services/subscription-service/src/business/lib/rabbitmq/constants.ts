@@ -1,0 +1,5 @@
+const EXCHANGE_NAME = "app_exchange";
+const MAX_RETRIES = 10;
+const RETRY_DELAY_MS = 5000;
+
+export { EXCHANGE_NAME, MAX_RETRIES, RETRY_DELAY_MS };
