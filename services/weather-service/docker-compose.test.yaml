@@ -1,0 +1,23 @@
+services:
+  redis:
+    image: redis:alpine
+    container_name: weather-service-test-redis
+    ports:
+      - "6380:6379"
+    restart: always
+
+  test-runner:
+    build:
+      context: .
+    container_name: weather-service-test
+    depends_on:
+      - redis
+    env_file:
+      - .env.test
+    command: sh -c "npm run test:integration"
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+
+volumes:
+  pgtestdata:
