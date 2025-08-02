@@ -7,17 +7,21 @@ import { eventService } from "./business/services";
 import { config } from "./config";
 
 async function main() {
-  const app = await createApp(true, config);
+  const app = await createApp(config);
 
-  const subscriptionConsumer = createSubscriptionConsumer({
-    brokerManager,
-    eventService,
-  });
+  const subscriptionConsumer = createSubscriptionConsumer(
+    {
+      brokerManager,
+      eventService,
+    },
+    app.instance.log
+  );
+
+  brokerManager.setLogger(app.instance.log);
 
   await Promise.all([app.start(), subscriptionConsumer.start()]);
-  
+
   console.log(`Notification Service listening on port ${config.port}`);
-  console.log("Message consumer started and is waiting for messages.");
 }
 
 main().catch((err) => {

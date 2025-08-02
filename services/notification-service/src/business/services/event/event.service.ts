@@ -3,9 +3,10 @@ import {
   SendConfirmationEmail,
 } from "@/business/lib/emails";
 import { ConsumeMessage } from "amqplib";
+import { FastifyBaseLogger } from "fastify";
 
 export interface EventService {
-  (msg: ConsumeMessage): Promise<void>;
+  processEvent: (msg: ConsumeMessage, log: FastifyBaseLogger) => Promise<void>;
 }
 
 export const createEventService = ({
@@ -13,17 +14,20 @@ export const createEventService = ({
 }: {
   sendConfirmationEmail: SendConfirmationEmail;
 }): EventService => {
-  return async (msg: ConsumeMessage) => {
+  const processEvent = async (msg: ConsumeMessage, log: FastifyBaseLogger) => {
     const event = JSON.parse(msg.content.toString());
-
     if (event.type === "SUBSCRIPTION_CREATED") {
       await sendConfirmationEmail({
         to: event.recipientEmail,
         token: event.confirmationToken,
       });
     } else {
-      console.warn(`[SubscriptionConsumer] Unknown event type: ${event.type}`);
+      log.warn(`[EventService] Unknown event type: ${event.type}`);
     }
+  };
+
+  return {
+    processEvent,
   };
 };
 

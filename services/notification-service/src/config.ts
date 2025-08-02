@@ -8,6 +8,7 @@ const configSchema = z.object({
   baseApiUrl: z.string(),
   rabbitMqUrl: z.string(),
   gatewayUrl: z.string(),
+  logLevel: z.enum(["debug", "info", "warn", "error"]).default("info"),
 });
 
 export const config = configSchema.parse({
@@ -18,6 +19,7 @@ export const config = configSchema.parse({
   baseApiUrl: process.env.BASE_API_URL,
   rabbitMqUrl: process.env.RABBITMQ_URL,
   gatewayUrl: process.env.GATEWAY_URL,
+  
 });
 
 export type Config = z.infer<typeof configSchema>;

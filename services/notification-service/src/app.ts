@@ -2,9 +2,27 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 
 import { errorHandler } from "./plugins/error-handler";
+import { Config } from "./config";
 
-export const createApp = async (logger = true, config = { port: 3003 }) => {
-  const app = Fastify({ logger });
+export const createApp = async (config: Config) => {
+  const app = Fastify({
+    logger: {
+      level: config.logLevel,
+      base: null,
+      timestamp: () => `,"time":"${new Date().toISOString()}"`,
+      transport:
+        config.nodeEnv === "development"
+          ? {
+              target: "pino-pretty",
+              options: {
+                colorize: true,
+                translateTime: "SYS:standard",
+                ignore: "pid,hostname",
+              },
+            }
+          : undefined,
+    },
+  });
 
   await app.register(cors, { origin: true, credentials: true });
 

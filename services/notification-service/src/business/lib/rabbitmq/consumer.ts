@@ -2,12 +2,14 @@ import { BrokerManager } from "./broker";
 import { ConsumerOptions } from "./types";
 import { EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY } from "./constants";
 import { EventService } from "@/business/services";
+import { FastifyBaseLogger } from "fastify";
 
 export class Consumer {
   constructor(
     private brokerManager: BrokerManager,
     private options: ConsumerOptions,
-    private handleMessage: EventService
+    private handleMessage: EventService,
+    private logger: FastifyBaseLogger
   ) {}
 
   public async start(): Promise<void> {
@@ -28,10 +30,13 @@ export class Consumer {
           return;
         }
         try {
-          await this.handleMessage(msg);
+          await this.handleMessage.processEvent(msg, this.logger);
           channel.ack(msg);
         } catch (error) {
-          console.error("[Consumer] Error processing message:", error);
+          this.logger.error(
+            { err: error },
+            "[Consumer] Error processing message"
+          );
           channel.nack(msg, false, true);
         }
       },
@@ -42,13 +47,16 @@ export class Consumer {
   }
 }
 
-export const createSubscriptionConsumer = ({
-  brokerManager,
-  eventService,
-}: {
-  brokerManager: BrokerManager;
-  eventService: EventService;
-}) => {
+export const createSubscriptionConsumer = (
+  {
+    brokerManager,
+    eventService,
+  }: {
+    brokerManager: BrokerManager;
+    eventService: EventService;
+  },
+  logger: FastifyBaseLogger
+) => {
   return new Consumer(
     brokerManager,
     {
@@ -56,6 +64,7 @@ export const createSubscriptionConsumer = ({
       queueName: QUEUE_NAME,
       routingKey: ROUTING_KEY,
     },
-    eventService
+    eventService,
+    logger
   );
 };

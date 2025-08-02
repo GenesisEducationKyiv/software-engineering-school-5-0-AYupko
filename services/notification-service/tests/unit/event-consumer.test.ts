@@ -7,6 +7,12 @@ import { sendConfirmationEmail } from "@/business/lib/emails";
 import { createEventService } from "@/business/services/event/event.service";
 import { ConsumeMessage } from "amqplib";
 
+const mockLogger = {
+  warn: jest.fn(),
+  error: jest.fn(),
+  info: jest.fn(),
+};
+
 const eventHandler = createEventService({
   sendConfirmationEmail,
 });
@@ -26,7 +32,7 @@ describe("Event Service (Consumer Logic)", () => {
       content: Buffer.from(JSON.stringify(eventPayload)),
     } as ConsumeMessage;
 
-    await eventHandler(fakeMessage);
+    await eventHandler.processEvent(fakeMessage, mockLogger as any);
 
     expect(sendConfirmationEmail).toHaveBeenCalledTimes(1);
     expect(sendConfirmationEmail).toHaveBeenCalledWith({
@@ -41,7 +47,7 @@ describe("Event Service (Consumer Logic)", () => {
       content: Buffer.from(JSON.stringify(eventPayload)),
     } as ConsumeMessage;
 
-    await eventHandler(fakeMessage);
+    await eventHandler.processEvent(fakeMessage, mockLogger as any);
 
     expect(sendConfirmationEmail).not.toHaveBeenCalled();
   });
