@@ -7,14 +7,17 @@ import { randomUUID } from "crypto";
 let app: Awaited<ReturnType<typeof createApp>>;
 let baseUrl: string;
 
-beforeEach(async () => {
+beforeAll(async () => {
   app = await createApp();
   await app.start();
   baseUrl = app.address + "/api";
 });
 
-afterEach(async () => {
+afterAll(async () => {
   await app.stop();
+});
+
+afterEach(async () => {
   await prisma.subscription.deleteMany();
 });
 

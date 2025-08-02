@@ -6,7 +6,7 @@ import { createApp } from "@/app";
 let app: Awaited<ReturnType<typeof createApp>>;
 let baseUrl: string;
 
-beforeEach(async () => {
+beforeAll(async () => {
   app = await createApp();
   await app.start();
   baseUrl = app.address + "/api";
@@ -48,7 +48,7 @@ describe("POST /subscribe", () => {
 
     const payload = createdOutboxEvent?.payload as any;
     expect(payload.type).toBe("SUBSCRIPTION_CREATED");
-    expect(payload.recepientEmail).toBe(email);
+    expect(payload.recipientEmail).toBe(email);
   });
 
   it("fails when subscribing twice with same email and city", async () => {

@@ -12,15 +12,24 @@ services:
     volumes:
       - pgtestdata:/var/lib/postgresql/data
 
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: subscription-service-test-rabbitmq
+    restart: always
+    ports:
+      - "5673:5672"
+      - "15672:15672"
+
   test-runner:
     build:
       context: .
     container_name: subscription-service-test
     depends_on:
       - db
+      - rabbitmq
     env_file:
       - .env.test
-    command: sh -c "npx prisma migrate deploy && npm run test:integration"
+    command: sh -c "echo 'Waiting for RabbitMQ to start...' && sleep 15 && echo 'RabbitMQ should be up, running tests...' && npx prisma migrate deploy && npm run test:integration"
     volumes:
       - ./src:/app/src
       - ./tests:/app/tests
