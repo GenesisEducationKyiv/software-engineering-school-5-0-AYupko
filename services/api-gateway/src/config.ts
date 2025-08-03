@@ -5,6 +5,7 @@ const configSchema = z.object({
   nodeEnv: z.enum(["development", "production", "test"]),
   weatherServiceUrl: z.string(),
   subscriptionServiceUrl: z.string(),
+  logLevel: z.enum(["debug", "info", "warn", "error"]).default("info"),
 });
 
 export const config = configSchema.parse({
@@ -12,6 +13,7 @@ export const config = configSchema.parse({
   nodeEnv: process.env.NODE_ENV,
   weatherServiceUrl: process.env.WEATHER_SERVICE_URL,
   subscriptionServiceUrl: process.env.SUBSCRIPTION_SERVICE_URL,
+  logLevel: process.env.LOG_LEVEL,
 });
 
 export type Config = z.infer<typeof configSchema>;

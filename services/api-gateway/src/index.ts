@@ -6,8 +6,27 @@ import { routes } from "./routes";
 import formbody from "@fastify/formbody";
 
 async function start() {
-  const fastify = Fastify({ logger: true });
+  const fastify = Fastify({
+    logger: {
+      level: config.logLevel,
+      base: null,
+      timestamp: () => `,"time":"${new Date().toISOString()}"`,
+      transport:
+        config.nodeEnv === "development"
+          ? {
+              target: "pino-pretty",
+              options: {
+                colorize: true,
+                translateTime: "SYS:standard",
+                ignore: "pid,hostname",
+              },
+            }
+          : undefined,
+    },
+  });
+
   fastify.register(formbody);
+  
   const weatherClient = new WeatherClient(
     config.weatherServiceUrl,
     fastify.log
