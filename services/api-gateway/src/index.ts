@@ -8,9 +8,13 @@ import formbody from "@fastify/formbody";
 async function start() {
   const fastify = Fastify({ logger: true });
   fastify.register(formbody);
-  const weatherClient = new WeatherClient(config.weatherServiceUrl);
+  const weatherClient = new WeatherClient(
+    config.weatherServiceUrl,
+    fastify.log
+  );
   const subscriptionClient = new SubscriptionClient(
-    config.subscriptionServiceUrl
+    config.subscriptionServiceUrl,
+    fastify.log
   );
 
   fastify.decorate("weatherClient", weatherClient);
