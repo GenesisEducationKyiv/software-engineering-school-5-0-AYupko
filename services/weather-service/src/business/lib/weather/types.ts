@@ -1,3 +1,4 @@
+import { Logger } from "pino";
 import { z } from "zod";
 
 export const weatherAPIResponseSchema = z.object({
@@ -43,6 +44,9 @@ type WeatherFailure = {
 
 export type WeatherResult = WeatherSuccess | WeatherFailure;
 
-export type WeatherProviderFn = (params: {
-  city: string;
-}) => Promise<WeatherResult>;
+export type WeatherProviderFn = (
+  params: {
+    city: string;
+  },
+  logger: Logger
+) => Promise<WeatherResult>;

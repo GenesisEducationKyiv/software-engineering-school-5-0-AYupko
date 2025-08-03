@@ -9,6 +9,7 @@ const configSchema = z.object({
   openWeatherMapApiUrl: z.string(),
   weatherApiKey: z.string(),
   weatherApiUrl: z.string(),
+  logLevel: z.enum(["error", "warn", "info", "debug"]).default("info"),
 });
 
 export const config = configSchema.parse({
@@ -20,6 +21,7 @@ export const config = configSchema.parse({
   openWeatherMapApiUrl: process.env.OPEN_WEATHER_MAP_API_URL,
   weatherApiKey: process.env.WEATHER_API_KEY,
   weatherApiUrl: process.env.WEATHER_API_URL,
+  logLevel: process.env.LOG_LEVEL,
 });
 
 export type Config = z.infer<typeof configSchema>;

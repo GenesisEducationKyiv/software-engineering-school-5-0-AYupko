@@ -1,6 +1,7 @@
-import { logToFile } from "../observability";
+import { Logger } from "pino";
 import { openWeatherProvider, weatherAPIProvider } from "./providers";
 import { WeatherProviderFn } from "./types";
+import { logger } from "../logger";
 
 type ProviderWithName = {
   name: string;
@@ -8,13 +9,12 @@ type ProviderWithName = {
 };
 
 export const chainProviders = (
-  providers: ProviderWithName[]
+  providers: ProviderWithName[],
+  logger: Logger
 ): WeatherProviderFn => {
   return async ({ city }) => {
-    for (const { name, fn } of providers) {
-      const result = await fn({ city });
-
-      logToFile(`${name} - Response: ${JSON.stringify(result)}`);
+    for (const { fn } of providers) {
+      const result = await fn({ city }, logger);
 
       if (result.success) return result;
     }
@@ -23,7 +23,10 @@ export const chainProviders = (
   };
 };
 
-export const chainedWeatherProviders = chainProviders([
-  { name: "weatherapi.com", fn: weatherAPIProvider },
-  { name: "openweathermap.org", fn: openWeatherProvider },
-]);
+export const chainedWeatherProviders = chainProviders(
+  [
+    { name: "weatherapi.com", fn: weatherAPIProvider },
+    { name: "openweathermap.org", fn: openWeatherProvider },
+  ],
+  logger
+);

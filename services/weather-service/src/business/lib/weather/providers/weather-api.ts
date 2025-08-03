@@ -2,14 +2,25 @@ import { config } from "@/config";
 import { weatherAPIResponseSchema, WeatherProviderFn } from "../types";
 import { BadRequestError, NotFoundError } from "../../error";
 
-export const weatherAPIProvider: WeatherProviderFn = async ({ city }) => {
+export const weatherAPIProvider: WeatherProviderFn = async (
+  { city },
+  logger
+) => {
   const url = `${config.weatherApiUrl}/current.json?key=${
     config.weatherApiKey
   }&q=${encodeURIComponent(city)}`;
 
   const response = await fetch(url);
 
+  logger.info({ msg: "Fetching weather data from WeatherAPI", city, url });
+
   if (!response.ok) {
+    logger.error({
+      msg: "WeatherAPI returned an error",
+      status: response.status,
+      city,
+    });
+
     if (response.status === 400) {
       throw new BadRequestError("Invalid request");
     }

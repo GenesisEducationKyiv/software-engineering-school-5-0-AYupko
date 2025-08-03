@@ -1,9 +1,10 @@
-jest.mock("@/business/lib/observability/logger", () => ({
-  logToFile: jest.fn(),
-}));
-
 import { BadRequestError, NotFoundError } from "@/business/lib/error";
 import { chainedWeatherProviders } from "@/business/lib/weather/chain";
+
+const mockLogger = {
+  info: jest.fn(),
+  error: jest.fn(),
+};
 
 describe("chainedWeatherProviders", () => {
   const mockFetch = jest.fn();
@@ -27,7 +28,10 @@ describe("chainedWeatherProviders", () => {
       json: async () => validResponse,
     });
 
-    const result = await chainedWeatherProviders({ city: "Lviv" });
+    const result = await chainedWeatherProviders(
+      { city: "Lviv" },
+      mockLogger as any
+    );
 
     expect(result).toEqual({
       success: true,
@@ -53,7 +57,10 @@ describe("chainedWeatherProviders", () => {
       }),
     });
 
-    const result = await chainedWeatherProviders({ city: "Kyiv" });
+    const result = await chainedWeatherProviders(
+      { city: "Kyiv" },
+      mockLogger as any
+    );
 
     expect(result).toEqual({
       success: true,
@@ -81,7 +88,10 @@ describe("chainedWeatherProviders", () => {
         }),
       });
 
-    const result = await chainedWeatherProviders({ city: "Kyiv" });
+    const result = await chainedWeatherProviders(
+      { city: "Kyiv" },
+      mockLogger as any
+    );
 
     expect(result).toEqual({
       success: true,
@@ -101,9 +111,9 @@ describe("chainedWeatherProviders", () => {
       status: 400,
     });
 
-    await expect(chainedWeatherProviders({ city: "!!!" })).rejects.toThrow(
-      BadRequestError
-    );
+    await expect(
+      chainedWeatherProviders({ city: "!!!" }, mockLogger as any)
+    ).rejects.toThrow(BadRequestError);
 
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
@@ -115,7 +125,7 @@ describe("chainedWeatherProviders", () => {
     });
 
     await expect(
-      chainedWeatherProviders({ city: "UnknownCity" })
+      chainedWeatherProviders({ city: "UnknownCity" }, mockLogger as any)
     ).rejects.toThrow(NotFoundError);
 
     expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -132,7 +142,10 @@ describe("chainedWeatherProviders", () => {
         json: async () => ({ main: {} }),
       });
 
-    const result = await chainedWeatherProviders({ city: "NoDataCity" });
+    const result = await chainedWeatherProviders(
+      { city: "NoDataCity" },
+      mockLogger as any
+    );
 
     expect(result).toEqual({ success: false });
     expect(mockFetch).toHaveBeenCalledTimes(2);

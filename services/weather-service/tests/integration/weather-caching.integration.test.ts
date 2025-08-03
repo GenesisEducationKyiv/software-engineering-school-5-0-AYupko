@@ -1,6 +1,11 @@
 import { createWeatherService } from "@/business/services";
 import { redis } from "@/business/lib/redis";
 
+const mockLogger = {
+  info: jest.fn(),
+  error: jest.fn(),
+};
+
 describe("Redis Integration Tests", () => {
   beforeAll(async () => {
     await redis.ping();
@@ -50,6 +55,7 @@ describe("Redis Integration Tests", () => {
     const testService = createWeatherService({
       weatherProvider: mockWeatherProvider,
       redis: redis,
+      logger: mockLogger as any,
     });
 
     const firstResponse = await testService.getWeather({ city });

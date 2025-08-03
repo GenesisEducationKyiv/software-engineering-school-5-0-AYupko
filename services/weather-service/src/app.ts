@@ -4,8 +4,8 @@ import { Config } from "./config";
 import { errorHandler } from "./plugins/error-handler";
 import { configureRoutes } from "./routes";
 
-export const createApp = async (logger = true, config: Config) => {
-  const app = Fastify({ logger });
+export const createApp = async (config: Config) => {
+  const app = Fastify();
 
   await app.register(cors, { origin: true, credentials: true });
 

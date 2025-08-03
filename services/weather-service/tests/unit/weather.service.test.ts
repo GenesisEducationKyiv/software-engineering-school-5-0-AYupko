@@ -4,6 +4,11 @@ import { InternalServerError } from "@/business/lib/error";
 import { createWeatherService } from "@/business/services";
 import { redis } from "@/business/lib/redis";
 
+const mockLogger = {
+  info: jest.fn(),
+  error: jest.fn(),
+};
+
 describe("weatherService", () => {
   const validWeather = {
     temperature: 10,
@@ -24,6 +29,7 @@ describe("weatherService", () => {
     const service = createWeatherService({
       weatherProvider: mockProvider,
       redis: redis,
+      logger: mockLogger as any,
     });
     const result = await service.getWeather({ city: "Lviv" });
 
@@ -36,6 +42,7 @@ describe("weatherService", () => {
     const service = createWeatherService({
       weatherProvider: mockProvider,
       redis: redis,
+      logger: mockLogger as any,
     });
 
     await expect(service.getWeather({ city: "FailCity" })).rejects.toThrow(
