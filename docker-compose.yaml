@@ -42,7 +42,7 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - ./services/weather-service/src:/app/services/weather-service/src
+      - ./services/weather-service/src:/app/src
     command: sh -c "npm run start:dev"
 
   subscription-service:
