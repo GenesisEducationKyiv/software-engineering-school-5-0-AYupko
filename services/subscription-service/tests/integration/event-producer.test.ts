@@ -79,7 +79,7 @@ describe("Outbox Producer Integration Test", () => {
     const dbEvent = await prisma.outboxEvent.findFirst();
     expect(dbEvent).not.toBeNull();
 
-    await outboxService.processOutboxEvents(app.instance.log);
+    await outboxService.processOutboxEvents();
 
     const receivedMsg = await waitForMessage(amqpChannel, testQueue.queue);
 

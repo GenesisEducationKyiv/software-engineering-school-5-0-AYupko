@@ -2,15 +2,17 @@ import { config } from "@/config";
 import amqplib, { Channel, ChannelModel } from "amqplib";
 import { EXCHANGE_NAME, MAX_RETRIES, RETRY_DELAY_MS } from "./constants";
 import { delay } from "../utils";
-import { FastifyBaseLogger } from "fastify";
+import { Logger } from "pino";
+import { logger } from "../logger";
+import { InternalServerError } from "../error";
 
 class BrokerManager {
   private connection: ChannelModel | null = null;
   private channel: Channel | null = null;
   private isConnecting: boolean = false;
-  private logger: FastifyBaseLogger | Console = console;
+  private logger: Logger;
 
-  public setLogger(logger: FastifyBaseLogger) {
+  constructor(logger: Logger) {
     this.logger = logger;
   }
 
@@ -19,7 +21,9 @@ class BrokerManager {
       await this.connect();
     }
     if (!this.channel) {
-      throw new Error("Could not establish a channel to the message broker.");
+      throw new InternalServerError(
+        "Could not establish a channel to the message broker."
+      );
     }
     return this.channel;
   }
@@ -90,4 +94,4 @@ class BrokerManager {
 }
 
 export { BrokerManager };
-export const brokerManager = new BrokerManager();
+export const brokerManager = new BrokerManager(logger);

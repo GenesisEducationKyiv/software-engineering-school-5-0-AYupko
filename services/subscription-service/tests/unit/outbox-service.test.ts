@@ -23,6 +23,7 @@ const mockLogger = {
 const outboxService = createOutboxService({
   outboxRepository: mockOutboxRepository as any,
   brokerManager: mockBrokerManager as any,
+  logger: mockLogger as any,
 });
 
 describe("Outbox Service", () => {
@@ -32,7 +33,7 @@ describe("Outbox Service", () => {
 
   it("should do nothing if there are no events to process", async () => {
     mockOutboxRepository.findNotProcessed.mockResolvedValue([]);
-    await outboxService.processOutboxEvents(mockLogger as any);
+    await outboxService.processOutboxEvents();
     expect(mockBrokerManager.getChannel).not.toHaveBeenCalled();
   });
 
@@ -43,7 +44,7 @@ describe("Outbox Service", () => {
     ];
     mockOutboxRepository.findNotProcessed.mockResolvedValue(events);
 
-    await outboxService.processOutboxEvents(mockLogger as any);
+    await outboxService.processOutboxEvents();
 
     expect(mockBrokerManager.getChannel).toHaveBeenCalledTimes(1);
 

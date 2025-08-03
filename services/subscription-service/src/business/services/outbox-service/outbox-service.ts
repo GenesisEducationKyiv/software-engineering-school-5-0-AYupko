@@ -1,3 +1,4 @@
+import { logger } from "@/business/lib/logger";
 import {
   brokerManager,
   BrokerManager,
@@ -7,16 +8,18 @@ import {
   outboxRepository,
   OutboxRepository,
 } from "@/database/repositories/outbox-event";
-import { FastifyBaseLogger } from "fastify";
+import { Logger } from "pino";
 
 export const createOutboxService = ({
   outboxRepository,
   brokerManager,
+  logger,
 }: {
   outboxRepository: OutboxRepository;
   brokerManager: BrokerManager;
+  logger: Logger;
 }) => {
-  const processOutboxEvents = async (logger: FastifyBaseLogger) => {
+  const processOutboxEvents = async () => {
     const notProcessedEvents = await outboxRepository.findNotProcessed();
 
     if (notProcessedEvents.length === 0) {
@@ -52,4 +55,5 @@ export const createOutboxService = ({
 export const outboxService = createOutboxService({
   outboxRepository,
   brokerManager,
+  logger,
 });
