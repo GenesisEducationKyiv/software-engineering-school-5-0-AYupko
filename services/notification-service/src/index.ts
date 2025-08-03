@@ -1,25 +1,12 @@
 import { createApp } from "./app";
-import {
-  brokerManager,
-  createSubscriptionConsumer,
-} from "./business/lib/rabbitmq";
-import { eventService } from "./business/services";
+import { eventConsumer } from "./business/lib/rabbitmq";
+
 import { config } from "./config";
 
 async function main() {
   const app = await createApp(config);
 
-  const subscriptionConsumer = createSubscriptionConsumer(
-    {
-      brokerManager,
-      eventService,
-    },
-    app.instance.log
-  );
-
-  brokerManager.setLogger(app.instance.log);
-
-  await Promise.all([app.start(), subscriptionConsumer.start()]);
+  await Promise.all([app.start(), eventConsumer.start()]);
 
   console.log(`Notification Service listening on port ${config.port}`);
 }

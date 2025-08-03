@@ -1,16 +1,32 @@
-import { BrokerManager } from "./broker";
+import { brokerManager, BrokerManager } from "./broker";
 import { ConsumerOptions } from "./types";
 import { EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY } from "./constants";
-import { EventService } from "@/business/services";
-import { FastifyBaseLogger } from "fastify";
+import { eventService, EventService } from "@/business/services";
+import { Logger } from "pino";
+import { logger } from "../logger";
 
 export class Consumer {
-  constructor(
-    private brokerManager: BrokerManager,
-    private options: ConsumerOptions,
-    private handleMessage: EventService,
-    private logger: FastifyBaseLogger
-  ) {}
+  private brokerManager: BrokerManager;
+  private handleMessage: EventService;
+  private logger: Logger;
+  private options: ConsumerOptions;
+
+  constructor({
+    brokerManager,
+    options,
+    handleMessage,
+    logger,
+  }: {
+    brokerManager: BrokerManager;
+    options: ConsumerOptions;
+    handleMessage: EventService;
+    logger: Logger;
+  }) {
+    this.brokerManager = brokerManager;
+    this.options = options;
+    this.handleMessage = handleMessage;
+    this.logger = logger;
+  }
 
   public async start(): Promise<void> {
     const channel = await this.brokerManager.getChannel();
@@ -26,9 +42,7 @@ export class Consumer {
     channel.consume(
       q.queue,
       async (msg) => {
-        if (!msg) {
-          return;
-        }
+        if (!msg) return;
         try {
           await this.handleMessage.processEvent(msg, this.logger);
           channel.ack(msg);
@@ -40,31 +54,18 @@ export class Consumer {
           channel.nack(msg, false, true);
         }
       },
-      {
-        noAck: false,
-      }
+      { noAck: false }
     );
   }
 }
 
-export const createSubscriptionConsumer = (
-  {
-    brokerManager,
-    eventService,
-  }: {
-    brokerManager: BrokerManager;
-    eventService: EventService;
+export const eventConsumer = new Consumer({
+  brokerManager,
+  options: {
+    exchangeName: EXCHANGE_NAME,
+    queueName: QUEUE_NAME,
+    routingKey: ROUTING_KEY,
   },
-  logger: FastifyBaseLogger
-) => {
-  return new Consumer(
-    brokerManager,
-    {
-      exchangeName: EXCHANGE_NAME,
-      queueName: QUEUE_NAME,
-      routingKey: ROUTING_KEY,
-    },
-    eventService,
-    logger
-  );
-};
+  handleMessage: eventService,
+  logger,
+});
