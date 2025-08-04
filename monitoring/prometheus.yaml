@@ -6,4 +6,10 @@ scrape_configs:
     static_configs:
       - targets: ['weather-service:3001']
     metrics_path: '/api/metrics/'
-    scrape_interval: 5s
+    scrape_interval: 15s
+
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:3000']
+    metrics_path: '/api/metrics'
+    scrape_interval: 15s

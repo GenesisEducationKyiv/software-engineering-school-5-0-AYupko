@@ -4,6 +4,7 @@ import { WeatherClient } from "./clients/weather-client";
 import { SubscriptionClient } from "./clients/subscription-client";
 import { routes } from "./routes";
 import formbody from "@fastify/formbody";
+import metricsPlugin from "./plugins/metrics";
 
 async function start() {
   const fastify = Fastify({
@@ -26,7 +27,8 @@ async function start() {
   });
 
   fastify.register(formbody);
-  
+  await fastify.register(metricsPlugin);
+
   const weatherClient = new WeatherClient(
     config.weatherServiceUrl,
     fastify.log

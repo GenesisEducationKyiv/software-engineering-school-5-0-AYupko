@@ -1,3 +1,4 @@
+import { MetricsInterceptor } from "@/business/lib/observability";
 import axios, { AxiosInstance } from "axios";
 import { FastifyBaseLogger } from "fastify";
 
@@ -8,6 +9,8 @@ export class WeatherClient {
   constructor(baseURL: string, logger: FastifyBaseLogger) {
     this.client = axios.create({ baseURL });
     this.logger = logger;
+
+    MetricsInterceptor.setupInterceptors(this.client, "weather-service");
   }
 
   async getWeather(city: string) {
