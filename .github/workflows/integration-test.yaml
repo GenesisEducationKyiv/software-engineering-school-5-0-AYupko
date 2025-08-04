@@ -1,21 +1,19 @@
-name: Integration Tests
+name: Run Integration Tests
 
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  integration-tests:
+  integration-tests-subscription-service:
     runs-on: ubuntu-latest
 
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/weather_test
-      REDIS_HOST: localhost
-      REDIS_PORT: 6379
-
-    defaults:
+      RABBITMQ_URL: amqp://guest:guest@localhost:5672
+    defaults: 
       run:
-        working-directory: ./backend
+        working-directory: services/subscription-service
 
     services:
       postgres:
@@ -31,7 +29,51 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+      
+      rabbitmq:
+        image: rabbitmq:3.13-management
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd="rabbitmq-diagnostics -q ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Run migrations
+        run: npx prisma migrate deploy
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+  integration-tests-weather-service:
+    runs-on: ubuntu-latest
+
+    env:
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+    defaults: 
+      run:
+        working-directory: services/weather-service
+
+    services:
       redis:
         image: redis:7-alpine
         env:
@@ -53,13 +95,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Generate Prisma client
-        run: npx prisma generate
-
-      - name: Run migrations
-        run: npx prisma migrate deploy
+        run: npm ci
 
       - name: Wait for Redis
         run: |
